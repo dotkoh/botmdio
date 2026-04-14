@@ -36,13 +36,13 @@ export default function AppointmentsTable({ appointments, onRowClick }: Appointm
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-200">
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Patient</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Appointment ID</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Appointment Type</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Calendar</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Appointment Date</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Booking Date</th>
-            <th className="text-left text-sm font-medium text-gray-500 px-5 py-3">Status</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Patient</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment ID</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment Type</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Calendar</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment Date</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Booking Date</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Status</th>
             <th className="w-10"></th>
           </tr>
         </thead>
