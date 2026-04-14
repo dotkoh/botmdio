@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -61,12 +62,14 @@ export default function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 w-56 h-screen bg-white border-r border-gray-200 z-10 flex flex-col">
       <div className="px-5 py-4 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#4361EE] rounded-lg flex items-center justify-center">
-            <Bot size={18} className="text-white" />
-          </div>
-          <span className="text-base font-semibold text-gray-900">Bot MD</span>
-        </div>
+        <Image
+          src="/botmd-logo.png"
+          alt="Bot MD"
+          width={120}
+          height={40}
+          className="h-8 w-auto"
+          priority
+        />
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4 px-3">
