@@ -55,12 +55,12 @@ export default function ContactsTable({
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-200">
+          <tr className="bg-[#F4F6F8] border-b border-gray-200">
             {headers.map((h) => (
               <th
                 key={h.field}
                 onClick={() => onSort(h.field)}
-                className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3 cursor-pointer hover:text-gray-700 transition-colors"
+                className="text-left text-[14px] font-normal text-[#111824] px-5 py-4 cursor-pointer hover:opacity-70 transition-colors"
               >
                 <div className="flex items-center gap-1">
                   {h.label}

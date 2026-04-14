@@ -35,14 +35,14 @@ export default function AppointmentsTable({ appointments, onRowClick }: Appointm
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-200">
-            <th className="text-left text-sm font-normal text-gray-400 pl-6 pr-5 py-5">Patient</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment ID</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment Type</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Calendar</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment Date</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Booking Date</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Status</th>
+          <tr className="bg-[#F4F6F8] border-b border-gray-200">
+            <th className="text-left text-[14px] font-normal text-[#111824] pl-6 pr-5 py-4">Patient</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Appointment ID</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Appointment Type</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Calendar</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Appointment Date</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Booking Date</th>
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">Status</th>
             <th className="w-10"></th>
           </tr>
         </thead>

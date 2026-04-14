@@ -135,23 +135,23 @@ export default function ContactProperties({
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+            <tr className="bg-[#F4F6F8] border-b border-gray-200">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Property Name
               </th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Key
               </th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Description
               </th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Type
               </th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Category
               </th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+              <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
                 Required
               </th>
               <th className="w-24"></th>

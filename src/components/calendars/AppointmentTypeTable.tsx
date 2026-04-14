@@ -13,14 +13,14 @@ export default function AppointmentTypeTable({
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-200">
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+          <tr className="bg-[#F4F6F8] border-b border-gray-200">
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
               Account
             </th>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
               Calendar
             </th>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-5 py-3">
+            <th className="text-left text-[14px] font-normal text-[#111824] px-5 py-4">
               Appointment Type
             </th>
           </tr>
