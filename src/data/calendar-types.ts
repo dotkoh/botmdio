@@ -8,6 +8,7 @@ export interface ProviderDefinition {
   fields: CredentialField[];
   helpText: string;
   helpLink?: string;
+  helpSteps?: string[];
 }
 
 export interface CredentialField {

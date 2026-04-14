@@ -107,7 +107,7 @@ export default function ConnectModal({
           <div key={field.key}>
             <label className="text-sm font-medium text-gray-700 mb-1 block">
               {field.label}
-              {field.required && " (Required)"}
+              {field.required ? " (Required)" : " (optional)"}
             </label>
             <input
               type="text"
@@ -121,6 +121,20 @@ export default function ConnectModal({
             />
           </div>
         ))}
+
+        {provider.helpSteps && (
+          <div className="text-sm text-gray-600">
+            <p className="font-medium text-gray-700 mb-2">
+              To add the webhook URL to your {provider.name} account, please
+              follow these steps:
+            </p>
+            <ol className="list-decimal list-inside space-y-1 text-gray-500">
+              {provider.helpSteps.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
     </Modal>
   );
