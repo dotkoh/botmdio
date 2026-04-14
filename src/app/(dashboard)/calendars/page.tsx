@@ -89,7 +89,16 @@ export default function CalendarsPage() {
       </div>
 
       <p className="text-sm text-gray-400 mt-6 max-w-3xl">
-        If you require assistance with integrations reach out to{" "}
+        View our{" "}
+        <a
+          href="https://api.botmd.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          API Documentation
+        </a>
+        . If you require assistance with custom integrations, please reach out to{" "}
         <a
           href="mailto:support@botmd.io"
           className="text-blue-600 hover:underline"
