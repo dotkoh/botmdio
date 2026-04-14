@@ -130,8 +130,8 @@ export default function ContactsPage() {
       {/* Page header */}
       <div className="flex items-center justify-between mb-1">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Contacts List</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-[32px] font-medium text-[#111824]">Contacts List</h1>
+          <p className="text-[16px] text-gray-500 mt-1">
             View and manage contacts & contact properties
           </p>
         </div>

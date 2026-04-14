@@ -65,8 +65,8 @@ export default function ChatWidgetPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Chat Widget</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-[32px] font-medium text-[#111824]">Chat Widget</h1>
+        <p className="text-[16px] text-gray-500 mt-1">
           Customize your chat widget and easily embed it on your website
         </p>
       </div>

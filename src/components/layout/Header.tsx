@@ -4,7 +4,7 @@ import { Bell, ChevronDown } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-20 bg-white px-6 py-3">
+    <header className="sticky top-0 z-20 bg-white px-10 py-3">
       <div className="flex items-center justify-between">
         <div className="text-[15px] font-medium text-[#111824]">
           Mary Mediatrix Medical Center (Org ID: mediatrix)

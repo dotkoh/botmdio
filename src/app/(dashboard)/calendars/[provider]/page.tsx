@@ -104,7 +104,7 @@ export default function ProviderDetailPage({
           <ChevronLeft size={16} />
           Back
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Provider not found</h1>
+        <h1 className="text-[32px] font-medium text-[#111824]">Provider not found</h1>
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function ProviderDetailPage({
       </Link>
 
       {/* Header */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-5">
+      <h1 className="text-[32px] font-medium text-[#111824] mb-5">
         {provider.name}
       </h1>
 
