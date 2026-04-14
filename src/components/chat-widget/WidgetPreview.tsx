@@ -89,7 +89,7 @@ export default function WidgetPreview({ channels, onAddWidget }: WidgetPreviewPr
               {activeChannels.length > 0 && (
                 <div className="px-4 py-4">
                   <p className="text-sm font-semibold text-[#111824] mb-3">
-                    Talk to us elsewhere
+                    Chat with us through:
                   </p>
                   <div className="space-y-2">
                     {activeChannels.map(([key, url]) => {
