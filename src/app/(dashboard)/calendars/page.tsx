@@ -62,7 +62,7 @@ export default function CalendarsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-[32px] font-medium text-[#111824]">Calendars</h1>
+        <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Calendars</h1>
         <p className="text-[16px] text-gray-500 mt-1">
           View and manage your calendar providers
         </p>
