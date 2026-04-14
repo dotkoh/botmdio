@@ -154,7 +154,7 @@ export default function ContactsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-gray-200 mt-4 mb-5">
+      <div className="flex items-center gap-6 border-b border-gray-200 mt-8 mb-6">
         <button
           onClick={() => setActiveTab("contacts")}
           className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
