@@ -7,8 +7,7 @@ export default function Header() {
     <header className="sticky top-0 z-20 bg-white px-6 py-3">
       <div className="flex items-center justify-between">
         <div className="text-sm text-[#111824]">
-          Mary Mediatrix Medical Center{" "}
-          <span className="text-gray-400">(Org ID: mediatrix)</span>
+          Mary Mediatrix Medical Center (Org ID: mediatrix)
         </div>
         <div className="flex items-center gap-4">
           <button className="relative p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
