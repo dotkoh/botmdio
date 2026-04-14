@@ -3,16 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LucideIcon } from "lucide-react";
 import {
   Inbox,
   Users,
-  CalendarRange,
   CalendarDays,
   MessageSquare,
   LayoutTemplate,
-  MessageCircle,
   Bot,
-  GitBranch,
   BarChart3,
   UserCog,
   Settings,
@@ -22,7 +20,19 @@ import {
   Mail,
 } from "lucide-react";
 
-const navSections = [
+interface NavItem {
+  name: string;
+  href: string;
+  icon?: LucideIcon;
+  customIcon?: string;
+}
+
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
   {
     label: "CUSTOMERS",
     items: [
@@ -33,7 +43,7 @@ const navSections = [
   {
     label: "SCHEDULING",
     items: [
-      { name: "Appointments", href: "/appointments", icon: CalendarRange },
+      { name: "Appointments", href: "/appointments", customIcon: "/icons/appointments.svg" },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
     ],
   },
@@ -42,14 +52,14 @@ const navSections = [
     items: [
       { name: "Channels", href: "/channels", icon: MessageSquare },
       { name: "Templates", href: "/templates", icon: LayoutTemplate },
-      { name: "Chat Widget", href: "/chat-widget", icon: MessageCircle },
+      { name: "Chat Widget", href: "/chat-widget", customIcon: "/icons/chat-widget.svg" },
     ],
   },
   {
     label: "AUTOMATION",
     items: [
       { name: "AI Agents", href: "/ai-agents", icon: Bot },
-      { name: "Workflows", href: "/workflows", icon: GitBranch },
+      { name: "Workflows", href: "/workflows", customIcon: "/icons/workflows.svg" },
     ],
   },
   {
@@ -104,11 +114,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {navSections.map((section, sectionIdx) => (
           <div key={section.label}>
             {/* Section divider */}
-            {sectionIdx > 0 && !collapsed && (
-              <div className="border-b border-gray-200 mx-2 my-2" />
-            )}
-            {sectionIdx > 0 && collapsed && (
-              <div className="border-b border-gray-200 mx-3 my-3" />
+            {sectionIdx > 0 && (
+              <div className={`border-b border-gray-200 my-2 ${collapsed ? "mx-3" : "mx-2"}`} />
             )}
 
             {!collapsed && (
@@ -122,6 +129,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 pathname === item.href ||
                 pathname.startsWith(item.href + "/");
               const Icon = item.icon;
+              const activeColor = isActive ? "text-[#4361EE]" : "text-[#111824]";
+
               return (
                 <Link
                   key={item.href}
@@ -135,11 +144,28 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       : "text-[#111824] hover:bg-gray-100"
                   }`}
                 >
-                  <Icon
-                    size={22}
-                    strokeWidth={isActive ? 2 : 1.7}
-                    className={isActive ? "text-[#4361EE]" : "text-[#111824]"}
-                  />
+                  {item.customIcon ? (
+                    <div
+                      className="w-[22px] h-[22px] shrink-0"
+                      style={{
+                        WebkitMaskImage: `url(${item.customIcon})`,
+                        WebkitMaskSize: "contain",
+                        WebkitMaskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center",
+                        maskImage: `url(${item.customIcon})`,
+                        maskSize: "contain",
+                        maskRepeat: "no-repeat",
+                        maskPosition: "center",
+                        backgroundColor: isActive ? "#4361EE" : "#111824",
+                      }}
+                    />
+                  ) : Icon ? (
+                    <Icon
+                      size={22}
+                      strokeWidth={isActive ? 2 : 1.7}
+                      className={activeColor}
+                    />
+                  ) : null}
                   {!collapsed && (
                     <span className="text-[15px] font-medium">{item.name}</span>
                   )}
