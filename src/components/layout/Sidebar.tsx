@@ -15,6 +15,7 @@ import {
   GitBranch,
   BarChart3,
   UserCog,
+  Settings,
 } from "lucide-react";
 
 const navSections = [
@@ -52,6 +53,7 @@ const navSections = [
     items: [
       { name: "Analytics", href: "/analytics", icon: BarChart3 },
       { name: "User Management", href: "/user-management", icon: UserCog },
+      { name: "Settings", href: "/settings", icon: Settings },
     ],
   },
 ];
@@ -79,7 +81,7 @@ export default function Sidebar() {
               {section.label}
             </div>
             {section.items.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               const Icon = item.icon;
               return (
                 <Link
