@@ -82,18 +82,18 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <Image
             src="/botmd-icon.png"
             alt="Bot MD"
-            width={40}
-            height={40}
-            className="h-10 w-10"
+            width={36}
+            height={36}
+            className="h-9 w-9"
             priority
           />
         ) : (
           <Image
             src="/botmd-logo.png"
             alt="Bot MD"
-            width={140}
-            height={44}
-            className="h-9 w-auto"
+            width={120}
+            height={32}
+            className="h-8 w-auto"
             priority
           />
         )}
@@ -126,16 +126,16 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   } ${
                     isActive
                       ? "bg-blue-50 text-[#4361EE] font-semibold"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                      : "text-[#111824] hover:bg-gray-100"
                   }`}
                 >
                   <Icon
-                    size={22}
-                    strokeWidth={isActive ? 2.2 : 1.8}
-                    className={isActive ? "text-[#4361EE]" : "text-gray-500"}
+                    size={24}
+                    strokeWidth={isActive ? 2 : 1.7}
+                    className={isActive ? "text-[#4361EE]" : "text-[#111824]"}
                   />
                   {!collapsed && (
-                    <span className="text-[13px]">{item.name}</span>
+                    <span className="text-sm">{item.name}</span>
                   )}
                 </Link>
               );
