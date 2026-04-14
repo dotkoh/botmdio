@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   Inbox,
   Users,
-  Calendar,
+  CalendarRange,
   CalendarDays,
   MessageSquare,
   LayoutTemplate,
@@ -33,7 +33,7 @@ const navSections = [
   {
     label: "SCHEDULING",
     items: [
-      { name: "Appointments", href: "/appointments", icon: Calendar },
+      { name: "Appointments", href: "/appointments", icon: CalendarRange },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
     ],
   },
@@ -102,15 +102,21 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Navigation */}
       <nav className={`flex-1 overflow-y-auto py-3 ${collapsed ? "px-2" : "px-3"}`}>
         {navSections.map((section, sectionIdx) => (
-          <div key={section.label} className="mb-1">
+          <div key={section.label}>
+            {/* Section divider */}
+            {sectionIdx > 0 && !collapsed && (
+              <div className="border-b border-gray-200 mx-2 my-2" />
+            )}
+            {sectionIdx > 0 && collapsed && (
+              <div className="border-b border-gray-200 mx-3 my-3" />
+            )}
+
             {!collapsed && (
-              <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-1.5 mt-4">
+              <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-1.5 mt-3">
                 {section.label}
               </div>
             )}
-            {collapsed && sectionIdx > 0 && (
-              <div className="border-b border-gray-100 mx-3 my-3" />
-            )}
+
             {section.items.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -130,12 +136,12 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   }`}
                 >
                   <Icon
-                    size={24}
+                    size={22}
                     strokeWidth={isActive ? 2 : 1.7}
                     className={isActive ? "text-[#4361EE]" : "text-[#111824]"}
                   />
                   {!collapsed && (
-                    <span className="text-sm">{item.name}</span>
+                    <span className="text-[15px] font-medium">{item.name}</span>
                   )}
                 </Link>
               );
