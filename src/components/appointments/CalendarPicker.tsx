@@ -132,7 +132,7 @@ export default function CalendarPicker({ selectedDate, onDateSelect, endDate, on
 
   return (
     <div ref={ref} className="relative">
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <button
           onClick={() => {
             const d = new Date(selectedDate + "T00:00:00");

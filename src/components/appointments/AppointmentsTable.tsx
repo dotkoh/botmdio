@@ -36,13 +36,13 @@ export default function AppointmentsTable({ appointments, onRowClick }: Appointm
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-200">
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Patient</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment ID</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment Type</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Calendar</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Appointment Date</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Booking Date</th>
-            <th className="text-left text-sm font-normal text-gray-400 px-5 py-3">Status</th>
+            <th className="text-left text-sm font-normal text-gray-400 pl-6 pr-5 py-5">Patient</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment ID</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment Type</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Calendar</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Appointment Date</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Booking Date</th>
+            <th className="text-left text-sm font-normal text-gray-400 px-5 py-5">Status</th>
             <th className="w-10"></th>
           </tr>
         </thead>
@@ -53,21 +53,21 @@ export default function AppointmentsTable({ appointments, onRowClick }: Appointm
               onClick={() => onRowClick(appt)}
               className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
             >
-              <td className="px-5 py-3.5">
+              <td className="pl-6 pr-5 py-5">
                 <div className="text-sm font-medium text-[#111824]">{appt.patient_name}</div>
                 <div className="text-xs text-gray-400">{appt.patient_email}</div>
               </td>
-              <td className="px-5 py-3.5 text-sm text-gray-700">{appt.appointment_id}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-700">{appt.appointment_type}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-700">{appt.calendar}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-700">{formatDate(appt.appointment_date)}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-700">{formatDate(appt.booking_date)}</td>
-              <td className="px-5 py-3.5">
+              <td className="px-5 py-5 text-sm text-gray-700">{appt.appointment_id}</td>
+              <td className="px-5 py-5 text-sm text-gray-700">{appt.appointment_type}</td>
+              <td className="px-5 py-5 text-sm text-gray-700">{appt.calendar}</td>
+              <td className="px-5 py-5 text-sm text-gray-700">{formatDate(appt.appointment_date)}</td>
+              <td className="px-5 py-5 text-sm text-gray-700">{formatDate(appt.booking_date)}</td>
+              <td className="px-5 py-5">
                 <span className={`text-sm font-medium ${statusStyles[appt.status]}`}>
                   {statusLabels[appt.status]}
                 </span>
               </td>
-              <td className="px-5 py-3.5">
+              <td className="px-5 py-5">
                 <button onClick={(e) => e.stopPropagation()} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
                   <MoreVertical size={16} />
                 </button>

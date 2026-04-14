@@ -34,7 +34,7 @@ export default function AppointmentFilters({
   const hasFilters = selectedAccount || selectedCalendar || selectedType || selectedStatus;
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-3 flex-wrap">
       <Dropdown label="Account" value={selectedAccount} options={accounts.map((a) => ({ label: a, value: a }))} onChange={onAccountChange} />
       <Dropdown label="Calendar" value={selectedCalendar} options={calendars.map((c) => ({ label: c, value: c }))} onChange={onCalendarChange} />
       <Dropdown label="Appointment Type" value={selectedType} options={appointmentTypes.map((t) => ({ label: t, value: t }))} onChange={onTypeChange} />

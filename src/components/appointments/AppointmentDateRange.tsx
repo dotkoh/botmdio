@@ -28,7 +28,7 @@ export default function AppointmentDateRange({
   ];
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
       <CalendarPicker
         selectedDate={startDate}
         onDateSelect={(d) => {

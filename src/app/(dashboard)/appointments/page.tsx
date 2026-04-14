@@ -113,11 +113,11 @@ export default function AppointmentsPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-1">
+      {/* Header: title → subtitle 8px, subtitle → search 24px */}
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Appointments</h1>
-          <p className="text-[16px] text-gray-500 mt-1">View and manage appointments</p>
+          <p className="text-[16px] text-gray-500 mt-2">View and manage appointments</p>
         </div>
         <button
           onClick={() => setScheduleModalOpen(true)}
@@ -128,8 +128,8 @@ export default function AppointmentsPage() {
         </button>
       </div>
 
-      {/* Search + Refresh */}
-      <div className="flex items-center gap-3 mt-6 mb-3">
+      {/* Search + Refresh: 24px from subtitle */}
+      <div className="flex items-center mt-6">
         <div className="relative flex-1 max-w-md">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -137,7 +137,7 @@ export default function AppointmentsPage() {
             placeholder="Search by patient name, appointment type or calendar"
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-9 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+            className="w-full pl-9 pr-9 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
           />
           {searchQuery && (
             <button onClick={() => { setSearchQuery(""); setPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -145,19 +145,19 @@ export default function AppointmentsPage() {
             </button>
           )}
         </div>
-        <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+        <button className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
           <RefreshCw size={16} />
         </button>
-        <span className="text-xs text-gray-400">Last Refreshed on {refreshTime}</span>
+        <span className="ml-4 text-xs text-gray-400 whitespace-nowrap">Last Refreshed on {refreshTime}</span>
       </div>
 
-      {/* Result count */}
-      <div className="text-sm text-gray-500 mb-3">
+      {/* Result count: 20px from search */}
+      <div className="text-sm text-gray-500 mt-5">
         Showing {Math.min((page - 1) * perPage + 1, filteredAppointments.length)}-{Math.min(page * perPage, filteredAppointments.length)} of <strong>{filteredAppointments.length}</strong> results
       </div>
 
-      {/* Filters + Date Range */}
-      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+      {/* Filters + Date Range: 16px from count, 20px to table */}
+      <div className="flex items-center justify-between mt-4 mb-5 gap-4 flex-wrap">
         <AppointmentFilters
           accounts={uniqueAccounts}
           calendars={uniqueCalendars}
