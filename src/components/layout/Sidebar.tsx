@@ -77,7 +77,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       }`}
     >
       {/* Logo */}
-      <div className={`py-4 border-b border-gray-200 ${collapsed ? "px-4 flex justify-center" : "px-5"}`}>
+      <div className={`py-4 ${collapsed ? "px-4 flex justify-center" : "px-5"}`}>
         {collapsed ? (
           <Image
             src="/botmd-icon.png"
