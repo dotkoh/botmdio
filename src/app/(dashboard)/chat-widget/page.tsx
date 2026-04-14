@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HelpCircle } from "lucide-react";
 import WidgetPreview from "@/components/chat-widget/WidgetPreview";
 import EmbedCode from "@/components/chat-widget/EmbedCode";
+import Modal from "@/components/ui/Modal";
 
 interface ChannelDefinition {
   key: string;
@@ -39,7 +40,7 @@ const channelDefinitions: ChannelDefinition[] = [
   },
   {
     key: "line",
-    label: "Line URL",
+    label: "LINE URL",
     placeholder: "line.me/ti/p/<LINE_ID>",
     tooltip: "Enter your LINE ID. Example: line.me/ti/p/@yourlineid",
   },
@@ -55,6 +56,7 @@ export default function ChatWidgetPage() {
   });
 
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const [embedModalOpen, setEmbedModalOpen] = useState(false);
 
   function updateChannel(key: string, value: string) {
     setChannels((prev) => ({ ...prev, [key]: value }));
@@ -72,8 +74,7 @@ export default function ChatWidgetPage() {
       <div className="flex gap-8">
         {/* Left: Configuration */}
         <div className="flex-1 max-w-2xl">
-          {/* Channel URL inputs */}
-          <div className="space-y-5 mb-8">
+          <div className="space-y-5">
             {channelDefinitions.map((channel) => (
               <div key={channel.key}>
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -100,7 +101,7 @@ export default function ChatWidgetPage() {
                   </div>
                 </div>
                 <div className="flex">
-                  <div className="bg-gray-50 border border-r-0 border-gray-300 rounded-l-lg px-3 py-3 text-sm text-gray-500 select-none">
+                  <div className="bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg px-3 py-3 text-sm text-gray-500 select-none">
                     https://
                   </div>
                   <input
@@ -114,16 +115,26 @@ export default function ChatWidgetPage() {
               </div>
             ))}
           </div>
-
-          {/* Embed code */}
-          <EmbedCode channels={channels} />
         </div>
 
         {/* Right: Preview */}
         <div className="w-80 shrink-0">
-          <WidgetPreview channels={channels} />
+          <WidgetPreview
+            channels={channels}
+            onAddWidget={() => setEmbedModalOpen(true)}
+          />
         </div>
       </div>
+
+      {/* Embed Code Modal */}
+      <Modal
+        open={embedModalOpen}
+        onClose={() => setEmbedModalOpen(false)}
+        title="Embed Code"
+        width="w-[640px]"
+      >
+        <EmbedCode channels={channels} />
+      </Modal>
     </div>
   );
 }

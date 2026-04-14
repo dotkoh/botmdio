@@ -72,44 +72,44 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-10 flex flex-col transition-all duration-200 ${
-        collapsed ? "w-16" : "w-56"
+      className={`fixed left-0 top-0 h-screen bg-gray-50 border-r border-gray-200 z-10 flex flex-col transition-all duration-200 ${
+        collapsed ? "w-20" : "w-60"
       }`}
     >
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-gray-200 flex items-center justify-center">
+      <div className={`py-4 border-b border-gray-200 ${collapsed ? "px-4 flex justify-center" : "px-5"}`}>
         {collapsed ? (
           <Image
             src="/botmd-icon.png"
             alt="Bot MD"
-            width={32}
-            height={32}
-            className="h-8 w-8"
+            width={40}
+            height={40}
+            className="h-10 w-10"
             priority
           />
         ) : (
           <Image
             src="/botmd-logo.png"
             alt="Bot MD"
-            width={120}
-            height={40}
-            className="h-8 w-auto"
+            width={140}
+            height={44}
+            className="h-9 w-auto"
             priority
           />
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2">
-        {navSections.map((section) => (
-          <div key={section.label} className="mb-5">
+      <nav className={`flex-1 overflow-y-auto py-3 ${collapsed ? "px-2" : "px-3"}`}>
+        {navSections.map((section, sectionIdx) => (
+          <div key={section.label} className="mb-1">
             {!collapsed && (
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
+              <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-1.5 mt-4">
                 {section.label}
               </div>
             )}
-            {collapsed && (
-              <div className="border-b border-gray-100 mx-2 mb-3" />
+            {collapsed && sectionIdx > 0 && (
+              <div className="border-b border-gray-100 mx-3 my-3" />
             )}
             {section.items.map((item) => {
               const isActive =
@@ -121,16 +121,22 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   title={collapsed ? item.name : undefined}
-                  className={`flex items-center gap-3 py-2.5 text-sm rounded-md transition-colors ${
+                  className={`flex items-center gap-3 py-2.5 rounded-lg transition-colors ${
                     collapsed ? "justify-center px-2" : "px-3"
                   } ${
                     isActive
-                      ? "bg-blue-50 text-blue-600 border-l-3 border-blue-600 font-medium"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-blue-50 text-[#4361EE] font-semibold"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                   }`}
                 >
-                  <Icon size={18} />
-                  {!collapsed && <span>{item.name}</span>}
+                  <Icon
+                    size={22}
+                    strokeWidth={isActive ? 2.2 : 1.8}
+                    className={isActive ? "text-[#4361EE]" : "text-gray-500"}
+                  />
+                  {!collapsed && (
+                    <span className="text-[13px]">{item.name}</span>
+                  )}
                 </Link>
               );
             })}
@@ -139,7 +145,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* Footer: Collapse toggle + Help + Support */}
-      <div className="border-t border-gray-200 px-2 py-3">
+      <div className="border-t border-gray-200 px-3 py-3">
         <div
           className={`flex items-center ${
             collapsed ? "flex-col gap-3" : "justify-between"
@@ -147,13 +153,13 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         >
           <button
             onClick={onToggle}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
-              <ChevronsRight size={18} />
+              <ChevronsRight size={20} />
             ) : (
-              <ChevronsLeft size={18} />
+              <ChevronsLeft size={20} />
             )}
           </button>
 
@@ -166,17 +172,17 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               href="https://guide.botmd.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               title="Help Guide"
             >
-              <HelpCircle size={18} />
+              <HelpCircle size={20} />
             </a>
             <a
               href="mailto:support@botmd.io"
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               title="Contact Support"
             >
-              <Mail size={18} />
+              <Mail size={20} />
             </a>
           </div>
         </div>
