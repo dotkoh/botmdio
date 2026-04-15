@@ -84,7 +84,7 @@ export default function ContactsTable({
             >
               <td className="px-5 py-3.5">
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm text-[#111824]">
                     {contact.name}
                   </div>
                   <div className="text-xs text-gray-400">

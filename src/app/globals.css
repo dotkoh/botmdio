@@ -130,6 +130,11 @@ select {
   color: #667085;
 }
 
+/* Near-black text → primary in dark */
+.dark .text-gray-900 {
+  color: #F5F7FB;
+}
+
 /* --- Inputs --- */
 
 .dark input,
