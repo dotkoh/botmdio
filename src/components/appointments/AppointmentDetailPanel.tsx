@@ -29,6 +29,10 @@ export default function AppointmentDetailPanel({ appointment, onClose }: Appoint
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    setMenuOpen(false);
+  }, [appointment]);
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     }

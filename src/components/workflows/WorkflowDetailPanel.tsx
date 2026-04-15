@@ -34,6 +34,11 @@ export default function WorkflowDetailPanel({ workflow, onClose }: WorkflowDetai
   const ref = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Reset menu when workflow changes (panel opens/closes)
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [workflow]);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
