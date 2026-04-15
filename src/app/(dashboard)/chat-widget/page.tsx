@@ -97,7 +97,7 @@ export default function ChatWidgetPage() {
               Widget Logo
             </label>
             <p className="text-xs text-gray-400 mb-3">
-              Upload your hospital or clinic logo (PNG or JPEG). This will appear in the widget header and as the chat bubble icon.
+              Upload your hospital or clinic logo (PNG or JPEG). Recommended size: 512 x 512px. This will appear in the widget header and as the chat bubble icon.
             </p>
             <div className="flex items-center gap-4">
               {logoUrl ? (
