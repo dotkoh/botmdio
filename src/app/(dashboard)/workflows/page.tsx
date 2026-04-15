@@ -3,7 +3,9 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { mockWorkflows } from "@/data/workflow-mock-data";
+import { Workflow } from "@/data/workflow-types";
 import WorkflowsTable from "@/components/workflows/WorkflowsTable";
+import WorkflowDetailPanel from "@/components/workflows/WorkflowDetailPanel";
 import Pagination from "@/components/contacts/Pagination";
 import Dropdown from "@/components/ui/Dropdown";
 import { Search, X, RefreshCw, Plus } from "lucide-react";
@@ -14,6 +16,7 @@ export default function WorkflowsPage() {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
 
   const uniqueTypes = [...new Set(mockWorkflows.map((w) => w.workflow_type))];
   const uniqueStatuses = [...new Set(mockWorkflows.map((w) => w.status))];
@@ -104,7 +107,7 @@ export default function WorkflowsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <WorkflowsTable workflows={paginated} />
+        <WorkflowsTable workflows={paginated} onRowClick={setSelectedWorkflow} />
         <Pagination
           page={page}
           totalPages={totalPages}
@@ -114,6 +117,12 @@ export default function WorkflowsPage() {
           onPerPageChange={(v) => { setPerPage(v); setPage(1); }}
         />
       </div>
+
+      {/* Detail Panel */}
+      <WorkflowDetailPanel
+        workflow={selectedWorkflow}
+        onClose={() => setSelectedWorkflow(null)}
+      />
     </div>
   );
 }

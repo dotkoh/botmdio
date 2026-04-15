@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { Workflow, WorkflowStatus } from "@/data/workflow-types";
-import { MoreVertical, AlertCircle } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 const statusStyles: Record<WorkflowStatus, string> = {
   active: "text-green-600 bg-green-50",
@@ -10,11 +11,20 @@ const statusStyles: Record<WorkflowStatus, string> = {
   archived: "text-gray-400 bg-gray-50",
 };
 
+const channelIcons: Record<string, string> = {
+  whatsapp: "/channels/whatsapp.svg",
+  messenger: "/channels/messenger.svg",
+  instagram: "/channels/instagram.svg",
+  viber: "/channels/viber.svg",
+  sms: "/channels/viber.svg",
+};
+
 interface WorkflowsTableProps {
   workflows: Workflow[];
+  onRowClick: (workflow: Workflow) => void;
 }
 
-export default function WorkflowsTable({ workflows }: WorkflowsTableProps) {
+export default function WorkflowsTable({ workflows, onRowClick }: WorkflowsTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -30,12 +40,20 @@ export default function WorkflowsTable({ workflows }: WorkflowsTableProps) {
         </thead>
         <tbody>
           {workflows.map((wf) => (
-            <tr key={wf.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
+            <tr
+              key={wf.id}
+              onClick={() => onRowClick(wf)}
+              className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+            >
               <td className="pl-6 pr-5 py-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-red-100 text-red-500 rounded-full flex items-center justify-center shrink-0">
-                    <AlertCircle size={16} />
-                  </div>
+                  <Image
+                    src={channelIcons[wf.channel] || "/channels/messenger.svg"}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded-full shrink-0"
+                  />
                   <div>
                     <div className="text-sm font-medium text-[#111824]">{wf.name}</div>
                     <div className="text-xs text-gray-400">{wf.workflow_type}</div>

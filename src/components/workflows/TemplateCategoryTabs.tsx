@@ -3,7 +3,7 @@
 import { WorkflowCategory, categoryLabels } from "@/data/workflow-types";
 
 const categories: WorkflowCategory[] = [
-  "appointment", "prom_prem", "medication", "marketing", "payment", "clinical",
+  "appointment", "prom_prem", "medication", "payment", "clinical",
 ];
 
 interface TemplateCategoryTabsProps {

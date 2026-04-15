@@ -11,10 +11,9 @@ export const workflowTemplates: WorkflowTemplate[] = [
   { id: "tpl_appt_nudge", category: "appointment", subcategory: "Follow-up", name: "Appointment Nudge", description: "Remind patients to reschedule appointments that they canceled", defaultTrigger: "X days after cancellation", triggerType: "after", event: "appointment.cancelled" },
 
   // === PROM/PREM ===
-  { id: "tpl_post_visit_survey", category: "prom_prem", subcategory: "Survey", name: "Post-Visit Survey", description: "Collect patient feedback after their visit", defaultTrigger: "X hours/days after appointment", triggerType: "after", event: "appointment.completed" },
-  { id: "tpl_treatment_outcome", category: "prom_prem", subcategory: "Outcome", name: "Treatment Outcome Check", description: "Follow up on patient treatment outcomes after a procedure", defaultTrigger: "X days/weeks after procedure", triggerType: "after" },
-  { id: "tpl_nps_survey", category: "prom_prem", subcategory: "Survey", name: "NPS Survey", description: "Measure patient satisfaction with Net Promoter Score", defaultTrigger: "X days after discharge", triggerType: "after", event: "patient.discharged" },
-  { id: "tpl_care_quality", category: "prom_prem", subcategory: "Survey", name: "Care Quality Survey", description: "Assess overall care quality after an episode of care", defaultTrigger: "X days after episode", triggerType: "after" },
+  { id: "tpl_pre_visit_reg", category: "prom_prem", subcategory: "Registration", name: "Pre-Visit Registration", description: "Send pre-visit registration forms to patients before their admission", defaultTrigger: "X days before appointment", triggerType: "before", event: "appointment.booked" },
+  { id: "tpl_post_visit_survey", category: "prom_prem", subcategory: "Survey", name: "Post-Visit Survey", description: "Send post-visit surveys to patients after their visit or discharge", defaultTrigger: "X hours/days after visit", triggerType: "after", event: "appointment.completed" },
+  { id: "tpl_prom_survey", category: "prom_prem", subcategory: "PROM", name: "PROM Survey", description: "Send clinical outcome surveys to patients at predefined intervals pre and post visit", defaultTrigger: "At predefined intervals", triggerType: "recurring" },
 
   // === MEDICATION ===
   { id: "tpl_prescription_ready", category: "medication", subcategory: "Medication", name: "Prescription Ready", description: "Notify patients when their prescription is ready for pickup", defaultTrigger: "Immediately when filled", triggerType: "immediately", event: "prescription.filled" },
@@ -22,22 +21,15 @@ export const workflowTemplates: WorkflowTemplate[] = [
   { id: "tpl_refill_reminder", category: "medication", subcategory: "Medication", name: "Refill Reminder", description: "Remind patients when it's time to refill their medication", defaultTrigger: "X days before refill due", triggerType: "before" },
   { id: "tpl_adherence_checkin", category: "medication", subcategory: "Adherence", name: "Adherence Check-in", description: "Check in with patients about their treatment adherence", defaultTrigger: "Recurring (daily/weekly)", triggerType: "recurring" },
 
-  // === MARKETING ===
-  { id: "tpl_welcome_msg", category: "marketing", subcategory: "Engagement", name: "Welcome Message", description: "Send a welcome message when a new patient registers", defaultTrigger: "Immediately upon registration", triggerType: "immediately", event: "patient.registered" },
-  { id: "tpl_health_tips", category: "marketing", subcategory: "Engagement", name: "Health Tips", description: "Send periodic health tips and wellness content to patients", defaultTrigger: "Recurring schedule", triggerType: "recurring" },
-  { id: "tpl_promo_campaign", category: "marketing", subcategory: "Campaign", name: "Promotional Campaign", description: "Send promotional messages for services and health packages", defaultTrigger: "Manual trigger", triggerType: "manual" },
-  { id: "tpl_reengagement", category: "marketing", subcategory: "Engagement", name: "Re-engagement", description: "Reach out to inactive patients to encourage a visit", defaultTrigger: "X days since last visit", triggerType: "after" },
-
   // === PAYMENT ===
-  { id: "tpl_invoice_notif", category: "payment", subcategory: "Invoice", name: "Invoice Notification", description: "Notify patients when a new invoice is generated", defaultTrigger: "Immediately upon creation", triggerType: "immediately", event: "invoice.created" },
-  { id: "tpl_payment_reminder", category: "payment", subcategory: "Payment", name: "Payment Reminder", description: "Remind patients about upcoming or overdue payments", defaultTrigger: "X days before/after due date", triggerType: "before" },
-  { id: "tpl_payment_confirm", category: "payment", subcategory: "Payment", name: "Payment Confirmation", description: "Confirm receipt of payment to patients", defaultTrigger: "Immediately upon payment", triggerType: "immediately", event: "payment.received" },
-  { id: "tpl_overdue_notice", category: "payment", subcategory: "Invoice", name: "Overdue Notice", description: "Notify patients of overdue invoices requiring attention", defaultTrigger: "X days after due date", triggerType: "after", event: "payment.overdue" },
+  { id: "tpl_payment_notif", category: "payment", subcategory: "Payment", name: "Payment Notification", description: "Notify patient that payment is due", defaultTrigger: "Immediately upon creation", triggerType: "immediately", event: "invoice.created" },
+  { id: "tpl_payment_confirm", category: "payment", subcategory: "Payment", name: "Payment Confirmation", description: "Confirm receipt of payment", defaultTrigger: "Immediately upon payment", triggerType: "immediately", event: "payment.received" },
+  { id: "tpl_payment_reminder", category: "payment", subcategory: "Payment", name: "Payment Reminder", description: "Remind patient to pay an overdue invoice", defaultTrigger: "X days after due date", triggerType: "after", event: "payment.overdue" },
 
-  // === CLINICAL ===
-  { id: "tpl_admission_notif", category: "clinical", subcategory: "Notification", name: "Admission Notification", description: "Notify relevant parties when a patient is admitted", defaultTrigger: "Immediately upon admission", triggerType: "immediately", event: "patient.admitted" },
-  { id: "tpl_discharge_instructions", category: "clinical", subcategory: "Notification", name: "Discharge Instructions", description: "Send discharge instructions and care plan to patients", defaultTrigger: "Immediately upon discharge", triggerType: "immediately", event: "patient.discharged" },
-  { id: "tpl_post_discharge", category: "clinical", subcategory: "Follow-up", name: "Post-Discharge Check", description: "Follow up with patients after discharge to check recovery", defaultTrigger: "X hours/days after discharge", triggerType: "after", event: "patient.discharged" },
-  { id: "tpl_lab_results", category: "clinical", subcategory: "Notification", name: "Lab Results Ready", description: "Notify patients when their lab results are available", defaultTrigger: "Immediately when available", triggerType: "immediately", event: "lab.results_ready" },
-  { id: "tpl_care_plan", category: "clinical", subcategory: "Care Plan", name: "Care Plan Reminder", description: "Remind patients about their ongoing care plan activities", defaultTrigger: "Recurring schedule", triggerType: "recurring" },
+  // === CLINICAL NOTIFICATIONS ===
+  { id: "tpl_pre_visit_reminder", category: "clinical", subcategory: "Pre-visit", name: "Pre-Visit Reminder", description: "Send pre-visit preparation instructions and reminders to patients", defaultTrigger: "X days before appointment", triggerType: "before", event: "appointment.booked" },
+  { id: "tpl_post_discharge_instructions", category: "clinical", subcategory: "Post-discharge", name: "Post-Discharge Instructions", description: "Send discharge instructions and care plan to patients after discharge", defaultTrigger: "Immediately upon discharge", triggerType: "immediately", event: "patient.discharged" },
+  { id: "tpl_post_discharge_check", category: "clinical", subcategory: "Post-discharge", name: "Post-Discharge Check", description: "Follow up with patients after discharge to check on recovery", defaultTrigger: "X hours/days after discharge", triggerType: "after", event: "patient.discharged" },
+  { id: "tpl_lab_results", category: "clinical", subcategory: "Results", name: "Lab Results Ready", description: "Notify patients when their lab results are available for review", defaultTrigger: "Immediately when available", triggerType: "immediately", event: "lab.results_ready" },
+  { id: "tpl_radiology_report", category: "clinical", subcategory: "Results", name: "Radiology Report Ready", description: "Notify patients when their radiology report is ready for review", defaultTrigger: "Immediately when available", triggerType: "immediately", event: "radiology.report_ready" },
 ];

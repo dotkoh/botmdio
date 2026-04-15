@@ -16,7 +16,7 @@ export default function CreateWorkflowPage() {
   );
 
   return (
-    <div>
+    <div className="pb-16">
       <Link
         href="/workflows"
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4"
