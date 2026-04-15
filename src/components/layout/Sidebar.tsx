@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/components/ThemeProvider";
 import { LucideIcon } from "lucide-react";
 import {
   Inbox,
@@ -79,6 +80,8 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { theme } = useTheme();
+  const logoSrc = theme === "dark" ? "/botmd-logo-white.png" : "/botmd-logo.png";
 
   return (
     <aside
@@ -99,7 +102,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           />
         ) : (
           <Image
-            src="/botmd-logo.png"
+            src={logoSrc}
             alt="Bot MD"
             width={120}
             height={32}
