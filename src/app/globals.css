@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Fix native select dropdown arrow padding */
 select {
   padding-right: 2.5rem !important;
@@ -10,4 +12,74 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+/* Dark mode overrides for common patterns */
+.dark {
+  color-scheme: dark;
+}
+
+/* Cards and table containers */
+.dark .bg-white {
+  background-color: #1a1d27;
+}
+
+/* Table header bg */
+.dark .bg-\[\#F4F6F8\] {
+  background-color: #22252f;
+}
+
+/* Borders */
+.dark .border-gray-200 {
+  border-color: #2d3040;
+}
+
+.dark .border-gray-100 {
+  border-color: #252836;
+}
+
+/* Text overrides */
+.dark .text-\[\#111824\] {
+  color: #e5e7eb;
+}
+
+.dark .text-gray-700 {
+  color: #9ca3af;
+}
+
+.dark .text-gray-500 {
+  color: #6b7280;
+}
+
+/* Inputs */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1a1d27;
+  border-color: #2d3040;
+  color: #e5e7eb;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #4b5563;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #22252f;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #252836;
+}
+
+/* Modals */
+.dark .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Blue backgrounds in dark mode */
+.dark .bg-blue-50 {
+  background-color: rgba(67, 97, 238, 0.1);
 }
