@@ -85,7 +85,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-gray-50 dark:bg-[#13151e] border-r border-gray-200 dark:border-gray-800 z-10 flex flex-col transition-all duration-200 ${
+      className={`fixed left-0 top-0 h-screen bg-gray-50 dark:bg-[#0A1020] border-r border-gray-200 dark:border-[#263248] z-10 flex flex-col transition-all duration-200 ${
         collapsed ? "w-20" : "w-60"
       }`}
     >
@@ -118,11 +118,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <div key={section.label}>
             {/* Section divider */}
             {sectionIdx > 0 && (
-              <div className={`border-b border-gray-200 dark:border-gray-700 my-2 ${collapsed ? "mx-3" : "mx-2"}`} />
+              <div className={`border-b border-gray-200 dark:border-[#1D2638] my-2 ${collapsed ? "mx-3" : "mx-2"}`} />
             )}
 
             {!collapsed && (
-              <div className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 mb-1.5 mt-3">
+              <div className="text-[11px] font-semibold text-gray-400 dark:text-[#7E889B] uppercase tracking-wider px-3 mb-1.5 mt-3">
                 {section.label}
               </div>
             )}
@@ -132,7 +132,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 pathname === item.href ||
                 pathname.startsWith(item.href + "/");
               const Icon = item.icon;
-              const iconColor = isActive ? "text-[#4361EE]" : "text-[#111824] dark:text-gray-300";
+              const iconColor = isActive ? "text-[#4361EE] dark:text-[#7DA2FF]" : "text-[#111824] dark:text-[#AEB8C8]";
 
               return (
                 <Link
@@ -143,8 +143,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     collapsed ? "justify-center px-2" : "px-3"
                   } ${
                     isActive
-                      ? "bg-blue-50 dark:bg-blue-950 text-[#4361EE] font-semibold"
-                      : "text-[#111824] dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "bg-blue-50 dark:bg-[#151E3A] text-[#4361EE] dark:text-[#F5F7FB] font-semibold"
+                      : "text-[#111824] dark:text-[#D6DCEA] hover:bg-gray-100 dark:hover:bg-[#182234]"
                   }`}
                 >
                   {item.customIcon ? (
@@ -180,7 +180,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* Footer: Collapse toggle + Help + Support */}
-      <div className="border-t border-gray-200 dark:border-gray-700 px-3 py-3">
+      <div className="border-t border-gray-200 dark:border-[#1D2638] px-3 py-3">
         <div
           className={`flex items-center ${
             collapsed ? "flex-col gap-3" : "justify-between"

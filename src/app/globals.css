@@ -14,72 +14,266 @@ select {
   appearance: none;
 }
 
-/* Dark mode overrides for common patterns */
+/* ============================================
+   DARK MODE TOKEN SYSTEM
+   ============================================
+   Backgrounds:
+     App bg:       #0D1320
+     Sidebar:      #0A1020
+     Card surface: #121A2B
+     Nested/inset: #182234
+     Table header: #1A2336
+
+   Borders:
+     Default:      #263248
+     Subtle:       #1D2638
+     Active:       #5B7CFF
+
+   Text:
+     Primary:      #F5F7FB
+     Secondary:    #C7CFDB
+     Tertiary:     #8E99AB
+     Disabled:     #667085
+
+   Accent:
+     Primary blue: #5B7CFF
+     Hover blue:   #7DA2FF
+     Link blue:    #4F7BFF
+
+   Status:
+     Success bg:   #163826
+     Success text:  #7EE2A8
+   ============================================ */
+
 .dark {
   color-scheme: dark;
 }
 
-/* Cards and table containers */
+/* --- Backgrounds --- */
+
+/* App body bg */
+.dark body {
+  background-color: #0D1320 !important;
+}
+
+/* Card surfaces: bg-white → dark card */
 .dark .bg-white {
-  background-color: #1a1d27;
+  background-color: #121A2B;
 }
 
 /* Table header bg */
 .dark .bg-\[\#F4F6F8\] {
-  background-color: #22252f;
+  background-color: #1A2336;
 }
 
-/* Borders */
+/* Sidebar bg override (handled in component) */
+
+/* Gray-50 backgrounds (sidebar, inputs) */
+.dark .bg-gray-50 {
+  background-color: #0A1020;
+}
+
+.dark .bg-gray-100 {
+  background-color: #182234;
+}
+
+/* Blue-50 backgrounds (active nav, badges) */
+.dark .bg-blue-50 {
+  background-color: #151E3A;
+}
+
+/* --- Borders --- */
+
 .dark .border-gray-200 {
-  border-color: #2d3040;
+  border-color: #263248;
 }
 
 .dark .border-gray-100 {
-  border-color: #252836;
+  border-color: #1D2638;
 }
 
-/* Text overrides */
+.dark .border-gray-300 {
+  border-color: #263248;
+}
+
+.dark .border-blue-200 {
+  border-color: #263248;
+}
+
+.dark .border-blue-100 {
+  border-color: #1D2638;
+}
+
+/* --- Text hierarchy --- */
+
+/* Primary text: page titles, provider names, card titles, data values */
 .dark .text-\[\#111824\] {
-  color: #e5e7eb;
+  color: #F5F7FB;
 }
 
+/* Secondary text: subtitles, body content, data values */
 .dark .text-gray-700 {
-  color: #9ca3af;
+  color: #C7CFDB;
 }
 
+.dark .text-gray-600 {
+  color: #C7CFDB;
+}
+
+/* Tertiary text: labels, helpers, muted */
 .dark .text-gray-500 {
-  color: #6b7280;
+  color: #8E99AB;
 }
 
-/* Inputs */
+/* Quaternary: very muted, timestamps, hints */
+.dark .text-gray-400 {
+  color: #667085;
+}
+
+/* --- Inputs --- */
+
 .dark input,
 .dark select,
 .dark textarea {
-  background-color: #1a1d27;
-  border-color: #2d3040;
-  color: #e5e7eb;
+  background-color: #121A2B;
+  border-color: #263248;
+  color: #F5F7FB;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: #4b5563;
+  color: #667085;
 }
 
-/* Hover states */
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #5B7CFF;
+}
+
+/* --- Hover states --- */
+
 .dark .hover\:bg-gray-50:hover {
-  background-color: #22252f;
+  background-color: #182234;
 }
 
 .dark .hover\:bg-gray-100:hover {
-  background-color: #252836;
+  background-color: #1D2638;
 }
 
-/* Modals */
+/* --- Modals --- */
+
 .dark .bg-black\/40 {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.65);
 }
 
-/* Blue backgrounds in dark mode */
-.dark .bg-blue-50 {
-  background-color: rgba(67, 97, 238, 0.1);
+.dark .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* --- Status badges --- */
+
+/* Green success */
+.dark .bg-green-100 {
+  background-color: #163826;
+}
+.dark .text-green-700,
+.dark .text-green-600 {
+  color: #7EE2A8;
+}
+
+/* Blue info - softer for non-interactive */
+.dark .text-blue-600 {
+  color: #7DA2FF;
+}
+
+.dark .text-blue-700 {
+  color: #7DA2FF;
+}
+
+/* Active nav blue - keep distinct */
+.dark .text-\[\#4361EE\] {
+  color: #7DA2FF;
+}
+
+/* Amber/warning */
+.dark .bg-amber-100,
+.dark .bg-amber-50 {
+  background-color: #2D2818;
+}
+.dark .text-amber-600,
+.dark .text-amber-700 {
+  color: #FCD34D;
+}
+
+/* Red/error */
+.dark .bg-red-100,
+.dark .bg-red-50 {
+  background-color: #2D1818;
+}
+.dark .text-red-600,
+.dark .text-red-500 {
+  color: #FCA5A5;
+}
+
+/* Gray badge */
+.dark .bg-gray-100.text-gray-500,
+.dark .bg-gray-100.text-gray-600 {
+  background-color: #1D2638;
+  color: #8E99AB;
+}
+
+/* --- Links --- */
+
+.dark a.text-blue-600 {
+  color: #4F7BFF;
+}
+
+.dark a.text-blue-600:hover {
+  color: #7DA2FF;
+}
+
+/* --- Template card subcategory badges --- */
+
+.dark .bg-green-50 { background-color: #0F2A1F; }
+.dark .bg-orange-50 { background-color: #2A1F0F; }
+.dark .bg-purple-50 { background-color: #1F0F2A; }
+.dark .bg-violet-50 { background-color: #1F0F2A; }
+.dark .bg-teal-50 { background-color: #0F2A2A; }
+.dark .bg-pink-50 { background-color: #2A0F1F; }
+.dark .bg-cyan-50 { background-color: #0F2A2A; }
+.dark .bg-rose-50 { background-color: #2A0F0F; }
+.dark .bg-indigo-50 { background-color: #0F0F2A; }
+.dark .bg-emerald-50 { background-color: #0F2A1F; }
+.dark .bg-yellow-50 { background-color: #2A2A0F; }
+
+.dark .border-green-200 { border-color: #1A3D2A; }
+.dark .border-orange-200 { border-color: #3D2A1A; }
+.dark .border-purple-200 { border-color: #2A1A3D; }
+.dark .border-violet-200 { border-color: #2A1A3D; }
+.dark .border-teal-200 { border-color: #1A3D3D; }
+.dark .border-pink-200 { border-color: #3D1A2A; }
+.dark .border-cyan-200 { border-color: #1A3D3D; }
+.dark .border-amber-200 { border-color: #3D2A1A; }
+.dark .border-indigo-200 { border-color: #1A1A3D; }
+.dark .border-emerald-200 { border-color: #1A3D2A; }
+.dark .border-yellow-200 { border-color: #3D3D1A; }
+
+/* --- Scrollbar --- */
+
+.dark ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0D1320;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #263248;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #364860;
 }
