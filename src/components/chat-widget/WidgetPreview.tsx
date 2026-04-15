@@ -18,10 +18,30 @@ const channelDisplay: Record<string, ChannelConfig> = {
 
 interface WidgetPreviewProps {
   channels: Record<string, string>;
+  logoUrl: string | null;
   onAddWidget: () => void;
 }
 
-export default function WidgetPreview({ channels, onAddWidget }: WidgetPreviewProps) {
+function DefaultIcon({ size = 18 }: { size?: number }) {
+  return <MessageSquare size={size} className="text-white" />;
+}
+
+function LogoOrIcon({ logoUrl, size, rounded }: { logoUrl: string | null; size: number; rounded: string }) {
+  if (logoUrl) {
+    return (
+      <Image
+        src={logoUrl}
+        alt="Logo"
+        width={size}
+        height={size}
+        className={`w-full h-full object-cover ${rounded}`}
+      />
+    );
+  }
+  return <DefaultIcon size={Math.round(size * 0.45)} />;
+}
+
+export default function WidgetPreview({ channels, logoUrl, onAddWidget }: WidgetPreviewProps) {
   const activeChannels = Object.entries(channels).filter(
     ([, url]) => url.trim() !== ""
   );
@@ -62,13 +82,11 @@ export default function WidgetPreview({ channels, onAddWidget }: WidgetPreviewPr
               rel="noopener noreferrer"
               className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg overflow-hidden"
             >
-              <Image
-                src={singleChannelIcon!}
-                alt=""
-                width={56}
-                height={56}
-                className="w-14 h-14"
-              />
+              {logoUrl ? (
+                <Image src={logoUrl} alt="" width={56} height={56} className="w-14 h-14 object-cover rounded-full" />
+              ) : (
+                <Image src={singleChannelIcon!} alt="" width={56} height={56} className="w-14 h-14" />
+              )}
             </a>
           </div>
         ) : (
@@ -77,8 +95,8 @@ export default function WidgetPreview({ channels, onAddWidget }: WidgetPreviewPr
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-xs mx-auto">
               {/* Header with hospital name */}
               <div className="bg-[#005ABF] px-4 py-5">
-                <div className="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center mb-3">
-                  <MessageSquare size={18} className="text-white" />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 overflow-hidden bg-white/20">
+                  <LogoOrIcon logoUrl={logoUrl} size={36} rounded="rounded-lg" />
                 </div>
                 <p className="text-white text-sm font-medium">
                   Mary Mediatrix Medical Center
@@ -136,8 +154,8 @@ export default function WidgetPreview({ channels, onAddWidget }: WidgetPreviewPr
 
             {/* Chat bubble */}
             <div className="flex justify-end mt-3">
-              <div className="w-12 h-12 bg-[#005ABF] rounded-full flex items-center justify-center shadow-lg">
-                <MessageSquare size={20} className="text-white" />
+              <div className="w-12 h-12 bg-[#005ABF] rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                <LogoOrIcon logoUrl={logoUrl} size={48} rounded="rounded-full" />
               </div>
             </div>
           </>

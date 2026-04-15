@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { HelpCircle } from "lucide-react";
+import { useState, useRef } from "react";
+import { HelpCircle, Upload, X } from "lucide-react";
+import Image from "next/image";
 import WidgetPreview from "@/components/chat-widget/WidgetPreview";
 import EmbedCode from "@/components/chat-widget/EmbedCode";
 import Modal from "@/components/ui/Modal";
@@ -57,6 +58,22 @@ export default function ChatWidgetPage() {
 
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [embedModalOpen, setEmbedModalOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(file);
+    setLogoUrl(url);
+  }
+
+  function removeLogo() {
+    if (logoUrl) URL.revokeObjectURL(logoUrl);
+    setLogoUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   function updateChannel(key: string, value: string) {
     setChannels((prev) => ({ ...prev, [key]: value }));
@@ -74,6 +91,55 @@ export default function ChatWidgetPage() {
       <div className="flex gap-8">
         {/* Left: Configuration */}
         <div className="flex-1 max-w-2xl">
+          {/* Logo upload */}
+          <div className="mb-8">
+            <label className="text-sm font-medium text-gray-700 mb-1.5 block">
+              Widget Logo
+            </label>
+            <p className="text-xs text-gray-400 mb-3">
+              Upload your hospital or clinic logo (PNG or JPEG). This will appear in the widget header and as the chat bubble icon.
+            </p>
+            <div className="flex items-center gap-4">
+              {logoUrl ? (
+                <div className="relative">
+                  <Image
+                    src={logoUrl}
+                    alt="Widget logo"
+                    width={56}
+                    height={56}
+                    className="w-14 h-14 rounded-xl object-cover border border-gray-200"
+                  />
+                  <button
+                    onClick={removeLogo}
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-14 h-14 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#4361EE] hover:bg-blue-50 transition-colors"
+                >
+                  <Upload size={20} className="text-gray-400" />
+                </div>
+              )}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                {logoUrl ? "Change Logo" : "Upload Logo"}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+            </div>
+          </div>
+
           <div className="space-y-5">
             {channelDefinitions.map((channel) => (
               <div key={channel.key}>
@@ -121,6 +187,7 @@ export default function ChatWidgetPage() {
         <div className="w-80 shrink-0">
           <WidgetPreview
             channels={channels}
+            logoUrl={logoUrl}
             onAddWidget={() => setEmbedModalOpen(true)}
           />
         </div>
