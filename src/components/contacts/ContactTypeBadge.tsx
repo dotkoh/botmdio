@@ -1,7 +1,7 @@
 import { ContactType } from "@/data/types";
 
 const typeStyles: Record<ContactType, string> = {
-  prospect: "bg-blue-100 text-blue-700",
+  prospect: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
   patient: "bg-green-100 text-green-700",
   lead: "bg-amber-100 text-amber-700",
 };
