@@ -35,7 +35,7 @@ export default function Dropdown({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-lg text-sm transition-colors h-10"
+        className="flex items-center justify-between bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 pl-4 pr-3 py-3 rounded-lg text-sm transition-colors h-10 min-w-[140px]"
       >
         <span>
           {label}

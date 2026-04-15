@@ -20,7 +20,7 @@ export default function DashboardLayout({
         }`}
       >
         <Header />
-        <main className="px-10 py-6 flex-1">{children}</main>
+        <main className="px-10 pt-6 pb-16 flex-1">{children}</main>
       </div>
     </div>
   );

@@ -64,16 +64,7 @@ export default function WorkflowDetailPanel({ workflow, onClose }: WorkflowDetai
       <div ref={ref} className="absolute right-0 top-0 h-full w-[480px] max-w-[90vw] bg-white shadow-xl border-l border-gray-200 flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src={channelIcons[workflow.channel] || "/channels/messenger.svg"}
-              alt=""
-              width={28}
-              height={28}
-              className="w-7 h-7 rounded-full"
-            />
-            <h2 className="text-lg font-semibold text-[#111824]">{workflow.name}</h2>
-          </div>
+          <h2 className="text-lg font-semibold text-[#111824]">{workflow.name}</h2>
           <div className="flex items-center gap-1">
             <div className="relative">
               <button

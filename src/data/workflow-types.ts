@@ -39,7 +39,7 @@ export interface Workflow {
 
 export const categoryLabels: Record<WorkflowCategory, string> = {
   appointment: "Appointment",
-  prom_prem: "PROM/PREM",
+  prom_prem: "Patient Surveys",
   medication: "Medication",
   payment: "Payment",
   clinical: "Clinical Notifications",

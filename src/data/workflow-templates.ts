@@ -14,6 +14,7 @@ export const workflowTemplates: WorkflowTemplate[] = [
   { id: "tpl_pre_visit_reg", category: "prom_prem", subcategory: "Registration", name: "Pre-Visit Registration", description: "Send pre-visit registration forms to patients before their admission", defaultTrigger: "X days before appointment", triggerType: "before", event: "appointment.booked" },
   { id: "tpl_post_visit_survey", category: "prom_prem", subcategory: "Survey", name: "Post-Visit Survey", description: "Send post-visit surveys to patients after their visit or discharge", defaultTrigger: "X hours/days after visit", triggerType: "after", event: "appointment.completed" },
   { id: "tpl_prom_survey", category: "prom_prem", subcategory: "PROM", name: "PROM Survey", description: "Send clinical outcome surveys to patients at predefined intervals pre and post visit", defaultTrigger: "At predefined intervals", triggerType: "recurring" },
+  { id: "tpl_prem_survey", category: "prom_prem", subcategory: "Survey", name: "PREM Survey", description: "Send patient experience surveys to measure satisfaction with care delivery and service quality", defaultTrigger: "X days after visit", triggerType: "after", event: "appointment.completed" },
 
   // === MEDICATION ===
   { id: "tpl_prescription_ready", category: "medication", subcategory: "Medication", name: "Prescription Ready", description: "Notify patients when their prescription is ready for pickup", defaultTrigger: "Immediately when filled", triggerType: "immediately", event: "prescription.filled" },
