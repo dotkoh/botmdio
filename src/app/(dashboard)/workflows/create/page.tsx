@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { workflowTemplates } from "@/data/workflow-templates";
 import { WorkflowCategory, categoryLabels } from "@/data/workflow-types";
@@ -8,8 +9,21 @@ import TemplateCategoryTabs from "@/components/workflows/TemplateCategoryTabs";
 import TemplateCard from "@/components/workflows/TemplateCard";
 import { ChevronLeft } from "lucide-react";
 
-export default function CreateWorkflowPage() {
-  const [category, setCategory] = useState<WorkflowCategory>("appointment");
+const validCategories: WorkflowCategory[] = ["appointment", "prom_prem", "medication", "payment", "clinical"];
+
+function CreateWorkflowContent() {
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") as WorkflowCategory | null;
+  const [category, setCategory] = useState<WorkflowCategory>(
+    initialCategory && validCategories.includes(initialCategory) ? initialCategory : "appointment"
+  );
+
+  useEffect(() => {
+    const cat = searchParams.get("category") as WorkflowCategory | null;
+    if (cat && validCategories.includes(cat)) {
+      setCategory(cat);
+    }
+  }, [searchParams]);
 
   const filteredTemplates = workflowTemplates.filter(
     (t) => t.category === category
@@ -32,7 +46,6 @@ export default function CreateWorkflowPage() {
       <TemplateCategoryTabs active={category} onChange={setCategory} />
 
       <div className="flex gap-8">
-        {/* Left sidebar */}
         <div className="w-48 shrink-0">
           <h3 className="text-sm font-semibold text-[#111824] mb-1">Templates</h3>
           <p className="text-sm text-gray-400 leading-relaxed">
@@ -40,7 +53,6 @@ export default function CreateWorkflowPage() {
           </p>
         </div>
 
-        {/* Template cards grid */}
         <div className="flex-1 grid grid-cols-3 gap-4">
           {filteredTemplates.map((template) => (
             <TemplateCard key={template.id} template={template} />
@@ -48,5 +60,13 @@ export default function CreateWorkflowPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CreateWorkflowPage() {
+  return (
+    <Suspense>
+      <CreateWorkflowContent />
+    </Suspense>
   );
 }

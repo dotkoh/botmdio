@@ -21,6 +21,8 @@ export const workflowTemplates: WorkflowTemplate[] = [
   { id: "tpl_med_reminder", category: "medication", subcategory: "Medication", name: "Medication Reminder", description: "Remind patients to take their scheduled medication", defaultTrigger: "At scheduled dose time", triggerType: "recurring" },
   { id: "tpl_refill_reminder", category: "medication", subcategory: "Medication", name: "Refill Reminder", description: "Remind patients when it's time to refill their medication", defaultTrigger: "X days before refill due", triggerType: "before" },
   { id: "tpl_adherence_checkin", category: "medication", subcategory: "Adherence", name: "Adherence Check-in", description: "Check in with patients about their treatment adherence", defaultTrigger: "Recurring (daily/weekly)", triggerType: "recurring" },
+  { id: "tpl_vaccination_reminder", category: "medication", subcategory: "Vaccination", name: "Vaccination Reminder", description: "Remind patients about upcoming vaccination appointments or doses", defaultTrigger: "X days before vaccination date", triggerType: "before" },
+  { id: "tpl_vaccination_series", category: "medication", subcategory: "Vaccination", name: "Vaccination Series", description: "Send follow-up reminders for multi-dose vaccine schedules (e.g., 2nd dose, booster)", defaultTrigger: "X days/weeks after previous dose", triggerType: "after" },
 
   // === PAYMENT ===
   { id: "tpl_payment_notif", category: "payment", subcategory: "Payment", name: "Payment Notification", description: "Notify patient that payment is due", defaultTrigger: "Immediately upon creation", triggerType: "immediately", event: "invoice.created" },
