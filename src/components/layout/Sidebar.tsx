@@ -19,6 +19,9 @@ import {
   ChevronsRight,
   HelpCircle,
   Mail,
+  Megaphone,
+  Radio,
+  UsersRound,
 } from "lucide-react";
 
 interface NavItem {
@@ -46,6 +49,14 @@ const navSections: NavSection[] = [
     items: [
       { name: "Appointments", href: "/appointments", customIcon: "/icons/appointments.svg" },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
+    ],
+  },
+  {
+    label: "MARKETING",
+    items: [
+      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
+      { name: "Broadcasts", href: "/broadcasts", icon: Radio },
+      { name: "Segments", href: "/segments", icon: UsersRound },
     ],
   },
   {
