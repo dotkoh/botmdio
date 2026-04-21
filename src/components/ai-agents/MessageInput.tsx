@@ -38,7 +38,7 @@ export default function MessageInput({
               : "bg-gray-100 dark:bg-[#182234] text-gray-600 dark:text-[#C7CFDB] hover:bg-gray-200 dark:hover:bg-[#1D2638]"
           }`}
         >
-          Free text
+          Text response
         </button>
         <button
           type="button"
@@ -49,7 +49,7 @@ export default function MessageInput({
               : "bg-gray-100 dark:bg-[#182234] text-gray-600 dark:text-[#C7CFDB] hover:bg-gray-200 dark:hover:bg-[#1D2638]"
           }`}
         >
-          Template
+          Template response
         </button>
       </div>
 

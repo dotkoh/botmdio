@@ -12,7 +12,6 @@ import {
   handoverMessageTemplates,
   awaitingResponseTemplates,
   defaultOperatingHours,
-  instructionExamples,
   type OperatingHours,
 } from "@/data/ai-agent-mock-data";
 import { mockRules } from "@/data/rule-mock-data";
@@ -514,17 +513,18 @@ export default function CreateAgentPage() {
             <h3 className="text-base font-semibold text-[#111824]">Knowledge Base</h3>
           </div>
           <div className="ml-10">
-            <p className="text-sm text-gray-500 mb-4">Subscribe this agent to one or more knowledge base sets. The agent will use these to answer patient questions.</p>
+            <p className="text-sm text-gray-500 mb-4">
+              Subscribe this agent to one or more knowledge base sets. The agent will use these to answer patient questions.{" "}
+              <Link href="/knowledge-base" className="text-blue-600 hover:underline">
+                Manage Knowledge Base →
+              </Link>
+            </p>
             <LibraryPicker
               items={kbItems}
               selectedIds={kbSets}
               onToggle={(id) => toggleSet(kbSets, setKbSets, id)}
               searchPlaceholder="Search knowledge base sets..."
               itemLabel="sets"
-              createLabel="Create new set"
-              createHref="/knowledge-base"
-              manageHref="/knowledge-base"
-              manageLabel="Manage Knowledge Base sets"
             />
           </div>
         </div>
@@ -538,17 +538,18 @@ export default function CreateAgentPage() {
             <h3 className="text-base font-semibold text-[#111824]">Scheduling</h3>
           </div>
           <div className="ml-10">
-            <p className="text-sm text-gray-500 mb-4">Subscribe to scheduling rules. Each rule comes with its calendar.</p>
+            <p className="text-sm text-gray-500 mb-4">
+              Subscribe to scheduling rules for calendar and appointment types.{" "}
+              <Link href="/rules" className="text-blue-600 hover:underline">
+                Manage Scheduling Rules →
+              </Link>
+            </p>
             <LibraryPicker
               items={ruleItems}
               selectedIds={enabledRules}
               onToggle={(id) => toggleSet(enabledRules, setEnabledRules, id)}
               searchPlaceholder="Search scheduling rules..."
               itemLabel="rules"
-              createLabel="Create new rule"
-              createHref="/rules"
-              manageHref="/rules"
-              manageLabel="Manage Scheduling Rules"
             />
           </div>
         </div>
@@ -562,17 +563,18 @@ export default function CreateAgentPage() {
             <h3 className="text-base font-semibold text-[#111824]">Recommendations</h3>
           </div>
           <div className="ml-10">
-            <p className="text-sm text-gray-500 mb-4">Flows the agent can proactively suggest to patients.</p>
+            <p className="text-sm text-gray-500 mb-4">
+              Recommendation logic for agent to suggest to patient.{" "}
+              <Link href="/recommendations" className="text-blue-600 hover:underline">
+                Manage Recommendations →
+              </Link>
+            </p>
             <LibraryPicker
               items={recItems}
               selectedIds={enabledRecs}
               onToggle={(id) => toggleSet(enabledRecs, setEnabledRecs, id)}
               searchPlaceholder="Search recommendation flows..."
               itemLabel="flows"
-              createLabel="Create recommendation flow"
-              createHref="/recommendations"
-              manageHref="/recommendations"
-              manageLabel="Manage Recommendations"
             />
           </div>
         </div>
@@ -842,7 +844,7 @@ export default function CreateAgentPage() {
           {behaviorOpen && (
             <div className="ml-10 mt-6 space-y-6">
               <div>
-                <label className="text-sm font-medium text-gray-500 mb-2 block">AI Model tier</label>
+                <label className="text-sm font-medium text-gray-500 mb-2 block">AI Model</label>
                 <div className="space-y-2">
                   {(Object.keys(modelTierLabels) as ModelTier[]).map((tier) => (
                     <label key={tier} className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
@@ -869,22 +871,6 @@ export default function CreateAgentPage() {
                   <span className={`absolute right-3 bottom-3 text-xs tabular-nums ${charCount > maxChars * 0.9 ? "text-amber-600" : "text-gray-400"}`}>
                     {charCount}/{maxChars}
                   </span>
-                </div>
-                <div className="mt-3">
-                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Examples other hospitals use:</div>
-                  <ul className="space-y-1">
-                    {instructionExamples.map((ex, i) => (
-                      <li key={i} className="text-sm text-gray-500 flex items-start gap-2">
-                        <span className="text-gray-400 shrink-0">▸</span>
-                        <button
-                          onClick={() => charCount + ex.length <= maxChars && setCustomInstructions(customInstructions ? `${customInstructions} ${ex}` : ex)}
-                          className="text-left hover:text-[#4361EE] transition-colors"
-                        >
-                          &ldquo;{ex}&rdquo;
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
             </div>
