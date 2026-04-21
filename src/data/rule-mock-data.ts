@@ -1,4 +1,25 @@
-import { SchedulingRule } from "./rule-types";
+import { SchedulingRule, HospitalUser } from "./rule-types";
+
+export const mockHospitalUsers: HospitalUser[] = [
+  { id: "user_1", name: "Dr. Maria Cruz", role: "Consultant — Cardiology", email: "m.cruz@mediatrix.com.ph" },
+  { id: "user_2", name: "Dr. Benjamin Tan", role: "Consultant — OBGYN", email: "b.tan@mediatrix.com.ph" },
+  { id: "user_3", name: "Nurse Aileen Reyes", role: "Senior Nurse — Patient Services", email: "a.reyes@mediatrix.com.ph" },
+  { id: "user_4", name: "Nurse Jay Gonzales", role: "Triage Nurse", email: "j.gonzales@mediatrix.com.ph" },
+  { id: "user_5", name: "Grace Lim", role: "Admin — Scheduling", email: "g.lim@mediatrix.com.ph" },
+  { id: "user_6", name: "Patrick Uy", role: "Admin — Billing & Insurance", email: "p.uy@mediatrix.com.ph" },
+  { id: "user_7", name: "Michelle Torres", role: "Customer Support Lead", email: "m.torres@mediatrix.com.ph" },
+  { id: "user_8", name: "Dot Koh", role: "Admin — Super User", email: "dot@botmd.io" },
+];
+
+export const mockCalendarOptions = [
+  { id: "cal_cardiology", name: "Cardiology Consultation", appointment_types: ["All appointments", "New Patient Consultation", "Follow-up", "Stress Test", "Echocardiogram"] },
+  { id: "cal_colonoscopy", name: "Colonoscopy", appointment_types: ["All appointments", "Screening", "Diagnostic", "Surveillance"] },
+  { id: "cal_obgyn", name: "OBGYN Consultation", appointment_types: ["All appointments", "Prenatal", "General OBGYN", "Annual Exam", "Fertility Consult"] },
+  { id: "cal_radiology", name: "Radiology", appointment_types: ["All appointments", "MRI Contrast", "MRI without Contrast", "CT Scan", "Ultrasound"] },
+  { id: "cal_wellness", name: "Wellness Screening", appointment_types: ["All appointments", "Annual Physical", "Executive Check-up", "Basic Screening"] },
+  { id: "cal_dermatology", name: "Dermatology", appointment_types: ["All appointments", "New Patient Consultation", "Skin Check", "Cosmetic Consult"] },
+  { id: "cal_orthopedics", name: "Orthopedics", appointment_types: ["All appointments", "New Patient Consultation", "Follow-up", "Physio Referral"] },
+];
 
 export const mockRules: SchedulingRule[] = [
   {
