@@ -169,11 +169,7 @@ export default function FormProvidersPage() {
       </div>
 
       <p className="text-sm text-gray-400 dark:text-[#8E99AB] mt-6 max-w-3xl">
-        View our{" "}
-        <a href="https://api.botmd.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-          API Documentation
-        </a>
-        . If you need to add a custom form provider, please reach out to{" "}
+        If you need to add a custom form provider, please reach out to{" "}
         <a href="mailto:support@botmd.io" className="text-blue-600 hover:underline">
           support@botmd.io
         </a>
