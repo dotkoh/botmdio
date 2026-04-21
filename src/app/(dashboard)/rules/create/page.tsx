@@ -41,6 +41,20 @@ const bookingWindowUnits: { value: TimeUnit; label: string }[] = [
   { value: "months", label: "months" },
 ];
 
+const countryCodes: { value: string; label: string }[] = [
+  { value: "+65", label: "🇸🇬 +65" },
+  { value: "+60", label: "🇲🇾 +60" },
+  { value: "+62", label: "🇮🇩 +62" },
+  { value: "+63", label: "🇵🇭 +63" },
+  { value: "+66", label: "🇹🇭 +66" },
+  { value: "+91", label: "🇮🇳 +91" },
+  { value: "+852", label: "🇭🇰 +852" },
+  { value: "+971", label: "🇦🇪 +971" },
+  { value: "+1", label: "🇺🇸 +1" },
+  { value: "+44", label: "🇬🇧 +44" },
+  { value: "+61", label: "🇦🇺 +61" },
+];
+
 export default function CreateRulePage() {
   // Section 1: Details
   const [ruleName, setRuleName] = useState("");
@@ -66,6 +80,7 @@ export default function CreateRulePage() {
   const [slotsUnsuitableAction, setSlotsUnsuitableAction] = useState<SlotsUnsuitableAction>("offer_more");
   const [maxRetries, setMaxRetries] = useState(3);
   const [schedulingLinkUrl, setSchedulingLinkUrl] = useState("");
+  const [preferredOptionsCount, setPreferredOptionsCount] = useState(3);
 
   // Section 5: Property Collection Config
   const [propertyConfigs, setPropertyConfigs] = useState<Record<string, { required: boolean; when: "before" | "after" }>>({});
@@ -88,11 +103,15 @@ export default function CreateRulePage() {
   const [reschedulePolicy, setReschedulePolicy] = useState<ReschedulePolicy>("allowed");
   const [rescheduleWindowValue, setRescheduleWindowValue] = useState(24);
   const [rescheduleWindowUnit, setRescheduleWindowUnit] = useState<TimeUnit>("hours");
+  const [rescheduleCallCountryCode, setRescheduleCallCountryCode] = useState("+65");
+  const [rescheduleCallNumber, setRescheduleCallNumber] = useState("");
 
   // Section 7: Cancel
   const [cancelPolicy, setCancelPolicy] = useState<CancelPolicy>("allowed");
   const [cancelWindowValue, setCancelWindowValue] = useState(24);
   const [cancelWindowUnit, setCancelWindowUnit] = useState<TimeUnit>("hours");
+  const [cancelCallCountryCode, setCancelCallCountryCode] = useState("+65");
+  const [cancelCallNumber, setCancelCallNumber] = useState("");
 
   // Section 8: Alerts
   const [alertMode, setAlertMode] = useState<AlertMode>("none");
@@ -288,8 +307,8 @@ export default function CreateRulePage() {
                 className="mt-0.5"
               />
               <div>
-                <div className="text-sm font-medium text-[#111824]">Scheduling AI to book directly</div>
-                <div className="text-xs text-gray-500 mt-0.5">AI offers patient slots to choose from → Patient selects preferred slot → Appointment confirmed immediately.</div>
+                <div className="text-sm font-medium text-[#111824]">Direct booking with AI</div>
+                <div className="text-xs text-gray-500 mt-0.5">Patient selects a slot → confirmed immediately</div>
               </div>
             </label>
 
@@ -381,7 +400,7 @@ export default function CreateRulePage() {
                 className="mt-0.5"
               />
               <div>
-                <div className="text-sm font-medium text-[#111824]">Send scheduling link</div>
+                <div className="text-sm font-medium text-[#111824]">Send Scheduling link</div>
                 <div className="text-xs text-gray-500 mt-0.5">AI returns scheduling link to an external booking portal.</div>
               </div>
             </label>
@@ -410,9 +429,24 @@ export default function CreateRulePage() {
               />
               <div>
                 <div className="text-sm font-medium text-[#111824]">Request preferred date and time</div>
-                <div className="text-xs text-gray-500 mt-0.5">AI collects patient&apos;s preferred date and time (AM/PM) and hands over to a human.</div>
+                <div className="text-xs text-gray-500 mt-0.5">AI collects patient&apos;s preferred date and time (AM/PM) which can be viewed in Appointments module</div>
               </div>
             </label>
+
+            {bookingMode === "request_preferred" && (
+              <div className="ml-7 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 mb-1 block">How many preferred date &amp; time options to collect?</label>
+                <select
+                  value={preferredOptionsCount}
+                  onChange={(e) => setPreferredOptionsCount(Number(e.target.value))}
+                  className="w-32 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                >
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
@@ -534,15 +568,39 @@ export default function CreateRulePage() {
             <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
               <input type="radio" name="reschedule" checked={reschedulePolicy === "not_allowed_handover"} onChange={() => setReschedulePolicy("not_allowed_handover")} className="mt-0.5" />
               <div>
-                <div className="text-sm font-medium text-[#111824]">No, rescheduling is not permitted — handover to human</div>
+                <div className="text-sm font-medium text-[#111824]">Rescheduling is not permitted — handover to human</div>
               </div>
             </label>
             <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
               <input type="radio" name="reschedule" checked={reschedulePolicy === "not_allowed_call"} onChange={() => setReschedulePolicy("not_allowed_call")} className="mt-0.5" />
               <div>
-                <div className="text-sm font-medium text-[#111824]">No, rescheduling is not permitted — ask patient to call to reschedule</div>
+                <div className="text-sm font-medium text-[#111824]">Rescheduling is not permitted — ask patient to call to reschedule</div>
               </div>
             </label>
+
+            {reschedulePolicy === "not_allowed_call" && (
+              <div className="ml-7 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Number to call</label>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={rescheduleCallCountryCode}
+                    onChange={(e) => setRescheduleCallCountryCode(e.target.value)}
+                    className="w-32 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                  >
+                    {countryCodes.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    value={rescheduleCallNumber}
+                    onChange={(e) => setRescheduleCallNumber(e.target.value)}
+                    placeholder="6123 4567"
+                    className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -594,6 +652,30 @@ export default function CreateRulePage() {
                 <div className="text-sm font-medium text-[#111824]">Cancellation is not permitted — ask patient to call to cancel</div>
               </div>
             </label>
+
+            {cancelPolicy === "not_allowed_call" && (
+              <div className="ml-7 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-lg p-4">
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Number to call</label>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={cancelCallCountryCode}
+                    onChange={(e) => setCancelCallCountryCode(e.target.value)}
+                    className="w-32 px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                  >
+                    {countryCodes.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    value={cancelCallNumber}
+                    onChange={(e) => setCancelCallNumber(e.target.value)}
+                    placeholder="6123 4567"
+                    className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
