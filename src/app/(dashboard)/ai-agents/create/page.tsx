@@ -213,7 +213,7 @@ export default function CreateAgentPage() {
         </div>
         <div className="flex items-center gap-3">
           <button className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            Test in sandbox
+            Save Draft
           </button>
           <button className="bg-[#4361EE] hover:bg-[#3651DE] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors">
             Publish
@@ -285,7 +285,7 @@ export default function CreateAgentPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Patient Bot"
+                placeholder="e.g. General Enquiry Bot"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
               />
               <p className="text-xs text-gray-400 mt-1">Internal name for your team — not shown to patients.</p>
