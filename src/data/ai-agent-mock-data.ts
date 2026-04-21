@@ -302,6 +302,59 @@ export const defaultHandoverRules: HandoverRule[] = [
   { id: "hr_2", trigger: "sentiment", trigger_value: "Patient expresses frustration", destination: "Patient services team" },
 ];
 
+export const handoverMessageTemplates: MessageTemplate[] = [
+  {
+    id: "mt_handover_office",
+    name: "Coordinating Agent Handover (Office Hours)",
+    preview: "Thanks for your patience! I'm connecting you with one of our staff members who will respond shortly.",
+    has_buttons: false,
+  },
+  {
+    id: "mt_handover_outside",
+    name: "Coordinating Agent Handover (Outside Office Hours)",
+    preview: "Our team is currently offline. We've logged your request and will respond during our next business hours (Mon–Fri, 9am–6pm).",
+    has_buttons: false,
+  },
+  {
+    id: "mt_handover_urgent",
+    name: "Urgent Handover",
+    preview: "Your message has been flagged as urgent. A member of our team will respond as soon as possible.",
+    has_buttons: false,
+  },
+];
+
+export const awaitingResponseTemplates: MessageTemplate[] = [
+  {
+    id: "mt_awaiting_default",
+    name: "Standard Awaiting Response",
+    preview: "Thanks for your message — we've received it. Our team will get back to you shortly.",
+    has_buttons: false,
+  },
+  {
+    id: "mt_awaiting_busy",
+    name: "Busy Period Response",
+    preview: "We're experiencing higher than usual volume. Your message is in the queue and a team member will respond as soon as possible.",
+    has_buttons: false,
+  },
+];
+
+export interface OperatingHours {
+  day: string;
+  enabled: boolean;
+  start: string;
+  end: string;
+}
+
+export const defaultOperatingHours: OperatingHours[] = [
+  { day: "Monday", enabled: true, start: "08:00", end: "17:00" },
+  { day: "Tuesday", enabled: true, start: "08:00", end: "17:00" },
+  { day: "Wednesday", enabled: true, start: "08:00", end: "17:00" },
+  { day: "Thursday", enabled: true, start: "08:00", end: "17:00" },
+  { day: "Friday", enabled: true, start: "08:00", end: "17:00" },
+  { day: "Saturday", enabled: false, start: "09:00", end: "13:00" },
+  { day: "Sunday", enabled: false, start: "09:00", end: "13:00" },
+];
+
 export const instructionExamples = [
   "Ask about fasting status before any bloodwork booking",
   "Mention complimentary valet parking for members",
