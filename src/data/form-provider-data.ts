@@ -1,5 +1,15 @@
 export type FormProviderStatus = "connected" | "disconnected" | "error";
 export type FormStatus = "active" | "inactive";
+export type FormType = "intake" | "prom" | "prem" | "post_visit" | "monitoring" | "other";
+
+export const formTypeLabels: Record<FormType, string> = {
+  intake: "Intake Form",
+  prom: "PROM",
+  prem: "PREM",
+  post_visit: "Post Visit Survey",
+  monitoring: "Monitoring Form",
+  other: "Other",
+};
 
 export interface FormProviderDefinition {
   id: string;
@@ -27,6 +37,8 @@ export interface IntegratedForm {
   provider_id: string;
   name: string;
   description: string;
+  form_type: FormType;
+  languages: string[];
   form_url: string;
   status: FormStatus;
   submissions_count: number;
@@ -85,7 +97,7 @@ export const mockConnectedProviders: ConnectedFormProvider[] = [
     status: "connected",
     date_added: "2026-03-15T00:00:00Z",
     last_received_at: "2026-04-21T09:30:00Z",
-    forms_count: 3,
+    forms_count: 5,
   },
   {
     id: "cp_002",
@@ -95,7 +107,17 @@ export const mockConnectedProviders: ConnectedFormProvider[] = [
     status: "connected",
     date_added: "2026-04-01T00:00:00Z",
     last_received_at: "2026-04-20T16:20:00Z",
-    forms_count: 2,
+    forms_count: 4,
+  },
+  {
+    id: "cp_003",
+    provider_id: "typeform",
+    webhook_url: "https://nova-api.production.botmd.io/forms/typeform/ghi789abc/callback",
+    webhook_secret: "whsec_ghi789abc345",
+    status: "connected",
+    date_added: "2026-02-20T00:00:00Z",
+    last_received_at: "2026-04-21T08:00:00Z",
+    forms_count: 3,
   },
 ];
 
@@ -105,6 +127,8 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "botmd_forms",
     name: "Patient Intake Form",
     description: "Initial patient registration and medical history",
+    form_type: "intake",
+    languages: ["English", "Mandarin", "Malay"],
     form_url: "https://forms.botmd.io/patient-intake",
     status: "active",
     submissions_count: 142,
@@ -116,6 +140,8 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "botmd_forms",
     name: "Pre-Surgery Questionnaire",
     description: "Pre-operative health assessment and consent",
+    form_type: "intake",
+    languages: ["English", "Mandarin"],
     form_url: "https://forms.botmd.io/pre-surgery",
     status: "active",
     submissions_count: 38,
@@ -127,6 +153,8 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "botmd_forms",
     name: "Discharge Feedback",
     description: "Post-discharge satisfaction and feedback form",
+    form_type: "prem",
+    languages: ["English", "Mandarin", "Malay", "Tamil"],
     form_url: "https://forms.botmd.io/discharge-feedback",
     status: "active",
     submissions_count: 89,
@@ -138,6 +166,8 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "google_forms",
     name: "Post-Visit Feedback Survey",
     description: "Patient satisfaction after consultation",
+    form_type: "post_visit",
+    languages: ["English"],
     form_url: "https://docs.google.com/forms/d/e/1FAIpQLSc.../viewform",
     status: "active",
     submissions_count: 67,
@@ -149,10 +179,103 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "google_forms",
     name: "Vaccination Record Upload",
     description: "Upload vaccination records for verification",
+    form_type: "monitoring",
+    languages: ["English", "Mandarin"],
     form_url: "https://docs.google.com/forms/d/e/2BFJqQMTd.../viewform",
     status: "inactive",
     submissions_count: 23,
     last_submission_at: "2026-04-10T08:45:00Z",
     created_at: "2026-04-05T00:00:00Z",
+  },
+  {
+    id: "form_006",
+    provider_id: "botmd_forms",
+    name: "Cardiology PROM Assessment",
+    description: "6-month post-cardiac procedure outcome assessment",
+    form_type: "prom",
+    languages: ["English", "Mandarin", "Malay"],
+    form_url: "https://forms.botmd.io/cardio-prom",
+    status: "active",
+    submissions_count: 54,
+    last_submission_at: "2026-04-20T10:30:00Z",
+    created_at: "2026-03-10T00:00:00Z",
+  },
+  {
+    id: "form_007",
+    provider_id: "typeform",
+    name: "Chronic Care Monitoring — Diabetes",
+    description: "Weekly glucose, diet and symptom monitoring form",
+    form_type: "monitoring",
+    languages: ["English", "Mandarin"],
+    form_url: "https://botmd.typeform.com/chronic-diabetes",
+    status: "active",
+    submissions_count: 218,
+    last_submission_at: "2026-04-21T07:15:00Z",
+    created_at: "2026-02-20T00:00:00Z",
+  },
+  {
+    id: "form_008",
+    provider_id: "typeform",
+    name: "Oncology PREM — Infusion Experience",
+    description: "Experience feedback after infusion appointment",
+    form_type: "prem",
+    languages: ["English", "Mandarin"],
+    form_url: "https://botmd.typeform.com/oncology-prem",
+    status: "active",
+    submissions_count: 41,
+    last_submission_at: "2026-04-19T15:00:00Z",
+    created_at: "2026-03-05T00:00:00Z",
+  },
+  {
+    id: "form_009",
+    provider_id: "google_forms",
+    name: "Maternity Intake Form",
+    description: "Prenatal patient registration",
+    form_type: "intake",
+    languages: ["English", "Malay", "Tamil"],
+    form_url: "https://docs.google.com/forms/d/e/3CGkrRNUe.../viewform",
+    status: "active",
+    submissions_count: 29,
+    last_submission_at: "2026-04-18T12:00:00Z",
+    created_at: "2026-04-02T00:00:00Z",
+  },
+  {
+    id: "form_010",
+    provider_id: "typeform",
+    name: "Post-Op Recovery Check-in",
+    description: "Daily recovery symptom check after surgery",
+    form_type: "monitoring",
+    languages: ["English"],
+    form_url: "https://botmd.typeform.com/post-op-check",
+    status: "active",
+    submissions_count: 173,
+    last_submission_at: "2026-04-21T08:00:00Z",
+    created_at: "2026-02-28T00:00:00Z",
+  },
+  {
+    id: "form_011",
+    provider_id: "botmd_forms",
+    name: "Annual Wellness PREM Survey",
+    description: "Annual patient experience measure",
+    form_type: "prem",
+    languages: ["English", "Mandarin", "Malay", "Tamil"],
+    form_url: "https://forms.botmd.io/wellness-prem",
+    status: "active",
+    submissions_count: 112,
+    last_submission_at: "2026-04-20T09:45:00Z",
+    created_at: "2026-03-01T00:00:00Z",
+  },
+  {
+    id: "form_012",
+    provider_id: "google_forms",
+    name: "Radiology Pre-Scan Form",
+    description: "Safety screening before MRI/CT scans",
+    form_type: "intake",
+    languages: ["English", "Mandarin"],
+    form_url: "https://docs.google.com/forms/d/e/4DHlsSPVf.../viewform",
+    status: "inactive",
+    submissions_count: 12,
+    last_submission_at: "2026-04-12T11:20:00Z",
+    created_at: "2026-04-08T00:00:00Z",
   },
 ];

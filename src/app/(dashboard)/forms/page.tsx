@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   mockIntegratedForms,
   formProviders,
+  formTypeLabels,
   IntegratedForm,
   FormStatus,
+  FormType,
 } from "@/data/form-provider-data";
 import Dropdown from "@/components/ui/Dropdown";
-import { Search, X as XIcon, RefreshCw, MoreVertical, ExternalLink, FileText } from "lucide-react";
+import Pagination from "@/components/contacts/Pagination";
+import { Search, X as XIcon, RefreshCw, MoreVertical, ExternalLink, FileText, Pencil, CircleDashed, Trash2 } from "lucide-react";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Never";
@@ -32,7 +34,11 @@ export default function FormsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [providerFilter, setProviderFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [formTypeFilter, setFormTypeFilter] = useState<string | null>(null);
+  const [languageFilter, setLanguageFilter] = useState<string | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,18 +50,37 @@ export default function FormsPage() {
   }, []);
 
   const uniqueProviders = useMemo(
-    () => [...new Set(mockIntegratedForms.map((f) => f.provider_id))],
-    []
+    () => [...new Set(forms.map((f) => f.provider_id))],
+    [forms]
   );
+
+  const uniqueFormTypes = useMemo(
+    () => [...new Set(forms.map((f) => f.form_type))],
+    [forms]
+  );
+
+  const uniqueLanguages = useMemo(() => {
+    const set = new Set<string>();
+    forms.forEach((f) => f.languages.forEach((l) => set.add(l)));
+    return [...set].sort();
+  }, [forms]);
 
   const filtered = useMemo(() => {
     return forms.filter((f) => {
-      if (searchQuery.trim() && !f.name.toLowerCase().includes(searchQuery.toLowerCase()) && !f.description.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (searchQuery.trim() && !f.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (providerFilter && f.provider_id !== providerFilter) return false;
       if (statusFilter && f.status !== statusFilter) return false;
+      if (formTypeFilter && f.form_type !== formTypeFilter) return false;
+      if (languageFilter && !f.languages.includes(languageFilter)) return false;
       return true;
     });
-  }, [forms, searchQuery, providerFilter, statusFilter]);
+  }, [forms, searchQuery, providerFilter, statusFilter, formTypeFilter, languageFilter]);
+
+  const totalPages = Math.ceil(filtered.length / perPage);
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * perPage, page * perPage),
+    [filtered, page, perPage]
+  );
 
   const now = new Date();
   const refreshTime = `${now.getDate()} ${now.toLocaleString("en", { month: "long" })} ${now.getFullYear()} @ ${now.toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit", hour12: false })}`;
@@ -70,8 +95,16 @@ export default function FormsPage() {
     setOpenMenu(null);
   }
 
-  const hasFilters = !!(providerFilter || statusFilter);
+  const hasFilters = !!(providerFilter || statusFilter || formTypeFilter || languageFilter);
   const isEmpty = forms.length === 0;
+
+  function clearAllFilters() {
+    setProviderFilter(null);
+    setStatusFilter(null);
+    setFormTypeFilter(null);
+    setLanguageFilter(null);
+    setPage(1);
+  }
 
   return (
     <div>
@@ -109,11 +142,11 @@ export default function FormsPage() {
                 type="text"
                 placeholder="Search forms..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
                 className="w-full pl-9 pr-9 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setSearchQuery(""); setPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   <XIcon size={14} />
                 </button>
               )}
@@ -125,16 +158,34 @@ export default function FormsPage() {
           </div>
 
           <div className="text-sm text-gray-500 mt-5">
-            Showing {filtered.length} of <strong>{forms.length}</strong> results
+            Showing {Math.min((page - 1) * perPage + 1, filtered.length)}-{Math.min(page * perPage, filtered.length)} of <strong>{filtered.length}</strong> results
           </div>
 
           {/* Filters */}
-          <div className="flex items-center gap-3 mt-4 mb-5">
+          <div className="flex items-center gap-3 mt-4 mb-5 flex-wrap">
             <Dropdown
               label="Provider"
               value={providerFilter}
-              options={uniqueProviders.map((p) => ({ label: formProviders.find((fp) => fp.id === p)?.name || p, value: p }))}
-              onChange={setProviderFilter}
+              options={uniqueProviders.map((p) => ({
+                label: formProviders.find((fp) => fp.id === p)?.name || p,
+                value: p,
+              }))}
+              onChange={(v) => { setProviderFilter(v); setPage(1); }}
+            />
+            <Dropdown
+              label="Form Type"
+              value={formTypeFilter}
+              options={uniqueFormTypes.map((t) => ({
+                label: formTypeLabels[t],
+                value: t,
+              }))}
+              onChange={(v) => { setFormTypeFilter(v); setPage(1); }}
+            />
+            <Dropdown
+              label="Language"
+              value={languageFilter}
+              options={uniqueLanguages.map((l) => ({ label: l, value: l }))}
+              onChange={(v) => { setLanguageFilter(v); setPage(1); }}
             />
             <Dropdown
               label="Status"
@@ -143,11 +194,11 @@ export default function FormsPage() {
                 { label: "Active", value: "active" },
                 { label: "Inactive", value: "inactive" },
               ]}
-              onChange={setStatusFilter}
+              onChange={(v) => { setStatusFilter(v); setPage(1); }}
             />
             {hasFilters && (
               <button
-                onClick={() => { setProviderFilter(null); setStatusFilter(null); }}
+                onClick={clearAllFilters}
                 className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
               >
                 Clear All
@@ -157,84 +208,116 @@ export default function FormsPage() {
 
           {/* Table */}
           <div className="bg-white dark:bg-[#121A2B] rounded-xl border border-gray-200 dark:border-[#263248] overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-[#F4F6F8] dark:bg-[#1A2336] border-b border-gray-200 dark:border-[#263248]">
-                  <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] pl-6 pr-5 py-4">Form Name</th>
-                  <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Provider</th>
-                  <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Submissions</th>
-                  <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Last Submission</th>
-                  <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Status</th>
-                  <th className="w-10"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((form) => {
-                  const provider = formProviders.find((p) => p.id === form.provider_id);
-                  const statusStyle = statusStyles[form.status];
-                  return (
-                    <tr key={form.id} className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                      <td className="pl-6 pr-5 py-5">
-                        <div className="text-sm font-medium text-[#111824] dark:text-[#F5F7FB]">{form.name}</div>
-                        <div className="text-xs text-gray-400 dark:text-[#8E99AB] mt-0.5">{form.description}</div>
-                      </td>
-                      <td className="px-5 py-5">
-                        <div className="flex items-center gap-2">
-                          {provider && (
-                            <Image src={provider.icon} alt="" width={24} height={24} className="w-6 h-6 rounded" />
-                          )}
-                          <span className="text-sm text-[#111824] dark:text-[#C7CFDB]">{provider?.name || form.provider_id}</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB] font-medium">{form.submissions_count}</td>
-                      <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">{formatDate(form.last_submission_at)}</td>
-                      <td className="px-5 py-5">
-                        <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusStyle.text}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
-                          {statusLabels[form.status]}
-                        </span>
-                      </td>
-                      <td className="px-5 py-5">
-                        <div className="relative">
-                          <button
-                            onClick={() => setOpenMenu(openMenu === form.id ? null : form.id)}
-                            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-[#182234] rounded-md transition-colors"
-                          >
-                            <MoreVertical size={16} />
-                          </button>
-                          {openMenu === form.id && (
-                            <div ref={menuRef} className="absolute right-0 top-full mt-1 bg-white dark:bg-[#121A2B] rounded-xl border border-gray-200 dark:border-[#263248] shadow-xl z-30 min-w-[180px] py-1">
-                              <a
-                                href={form.form_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-[#C7CFDB] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
-                              >
-                                <ExternalLink size={12} /> Open form
-                              </a>
-                              <button onClick={() => handleToggleStatus(form.id)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-[#C7CFDB] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                                {form.status === "active" ? "Mark as Inactive" : "Mark as Active"}
-                              </button>
-                              <div className="border-t border-gray-100 dark:border-[#1D2638] my-1" />
-                              <button onClick={() => handleDelete(form.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-[#2D1818] transition-colors">
-                                Remove
-                              </button>
-                            </div>
-                          )}
-                        </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-[#F4F6F8] dark:bg-[#1A2336] border-b border-gray-200 dark:border-[#263248]">
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] pl-6 pr-5 py-4">Form Name</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Provider</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Form Type</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Language</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Submissions</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Last Submission</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Status</th>
+                    <th className="w-10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginated.map((form) => {
+                    const provider = formProviders.find((p) => p.id === form.provider_id);
+                    const statusStyle = statusStyles[form.status];
+
+                    return (
+                      <tr
+                        key={form.id}
+                        className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                      >
+                        <td className="pl-6 pr-5 py-5">
+                          <div className="text-sm font-medium text-[#111824] dark:text-[#F5F7FB]">{form.name}</div>
+                          <div className="text-xs text-gray-400 dark:text-[#8E99AB] mt-0.5 truncate max-w-md">{form.description}</div>
+                        </td>
+                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">{provider?.name || form.provider_id}</td>
+                        <td className="px-5 py-5">
+                          <span className="inline-flex items-center text-xs font-medium text-gray-700 dark:text-[#C7CFDB] bg-gray-100 dark:bg-[#1A2336] border border-gray-200 dark:border-[#263248] px-2.5 py-1 rounded-full">
+                            {formTypeLabels[form.form_type]}
+                          </span>
+                        </td>
+                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">
+                          {form.languages.join(", ")}
+                        </td>
+                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB] tabular-nums">{form.submissions_count.toLocaleString()}</td>
+                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">{formatDate(form.last_submission_at)}</td>
+                        <td className="px-5 py-5">
+                          <span className={`inline-flex items-center gap-1.5 text-sm font-medium ${statusStyle.text}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
+                            {statusLabels[form.status]}
+                          </span>
+                        </td>
+                        <td className="px-5 py-5">
+                          <div className="relative">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === form.id ? null : form.id); }}
+                              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-[#182234] rounded-md transition-colors"
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                            {openMenu === form.id && (
+                              <div ref={menuRef} className="absolute right-0 top-full mt-1 bg-white dark:bg-[#121A2B] rounded-xl border border-gray-200 dark:border-[#263248] shadow-xl z-30 min-w-[180px] py-1">
+                                <a
+                                  href={form.form_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => setOpenMenu(null)}
+                                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-[#C7CFDB] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                                >
+                                  <ExternalLink size={14} /> View Form
+                                </a>
+                                <button
+                                  onClick={() => setOpenMenu(null)}
+                                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-[#C7CFDB] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                                >
+                                  <Pencil size={14} /> Edit Details
+                                </button>
+                                <button
+                                  onClick={() => handleToggleStatus(form.id)}
+                                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-[#C7CFDB] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                                >
+                                  <CircleDashed size={14} />
+                                  {form.status === "active" ? "Mark as Inactive" : "Mark as Active"}
+                                </button>
+                                <div className="border-t border-gray-100 dark:border-[#1D2638] my-1" />
+                                <button
+                                  onClick={() => handleDelete(form.id)}
+                                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-[#2D1818] transition-colors"
+                                >
+                                  <Trash2 size={14} /> Delete Form
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {paginated.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="px-5 py-12 text-center text-sm text-gray-400">
+                        No forms match your filters
                       </td>
                     </tr>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-sm text-gray-400">
-                      No forms match your filters
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              perPage={perPage}
+              totalItems={filtered.length}
+              onPageChange={setPage}
+              onPerPageChange={(v) => { setPerPage(v); setPage(1); }}
+            />
           </div>
         </>
       )}

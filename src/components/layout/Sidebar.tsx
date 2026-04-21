@@ -78,8 +78,8 @@ const navSections: NavSection[] = [
   {
     label: "SURVEYS",
     items: [
-      { name: "Survey Data", href: "/survey-data", icon: ClipboardList },
       { name: "Forms", href: "/forms", icon: FileText },
+      { name: "Form Workflows", href: "/form-workflows", icon: ClipboardList },
       { name: "Form Providers", href: "/form-providers", icon: Link2 },
     ],
   },
