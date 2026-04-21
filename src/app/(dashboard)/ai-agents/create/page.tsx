@@ -9,23 +9,22 @@ import {
   availableKnowledgeBaseSets,
   availableRecommendations,
   availableHandoverTeams,
+  availableConsentTemplates,
+  defaultHandoverRules,
   instructionExamples,
-  type ChannelOption,
+  type HandoverRule,
 } from "@/data/ai-agent-mock-data";
 import { mockRules } from "@/data/rule-mock-data";
 import {
   VoiceTone,
-  ConsentTemplateMode,
   ModelTier,
-  AfterHoursBehavior,
   voiceToneLabels,
-  defaultConsentTemplates,
   modelTierLabels,
   availableLanguages,
 } from "@/data/ai-agent-types";
 import LibraryPicker, { LibraryPickerItem } from "@/components/ai-agents/LibraryPicker";
 import MultiSelect from "@/components/ui/MultiSelect";
-import { ChevronLeft, ChevronDown, ChevronUp, Check, Lock, Copy, FileText, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronDown, ChevronUp, Copy, FileText, Plus, Trash2 } from "lucide-react";
 
 const channelIcons: Record<string, string> = {
   whatsapp: "/channels/whatsapp.svg",
@@ -41,19 +40,22 @@ function SectionNumber({ num }: { num: number }) {
   );
 }
 
-type StartFrom = "blank" | "clone" | "template";
+type StartFrom = "blank" | "clone";
+type ConsentMode = "free_text" | "message_template";
 
-const templates = [
-  { id: "tpl_patient", name: "Patient Assistant", description: "General patient-facing agent template" },
-  { id: "tpl_insurance", name: "Insurance Assistant", description: "Insurance verification and claims template" },
-  { id: "tpl_cardiology", name: "Cardiology Assistant", description: "Specialized cardiology template" },
+const handoverTriggers = [
+  { value: "emergency", label: "Emergency keywords detected" },
+  { value: "keyword", label: "Specific keyword mentioned" },
+  { value: "sentiment", label: "Patient expresses frustration" },
+  { value: "after_turns", label: "After N conversation turns" },
+  { value: "no_kb_match", label: "No matching knowledge base answer" },
+  { value: "custom", label: "Custom condition" },
 ];
 
 export default function CreateAgentPage() {
   // Start from
   const [startFrom, setStartFrom] = useState<StartFrom>("blank");
   const [cloneSource, setCloneSource] = useState<string>(mockAgents[0]?.id || "");
-  const [templateId, setTemplateId] = useState<string>(templates[0].id);
 
   // Details
   const [name, setName] = useState("");
@@ -61,30 +63,29 @@ export default function CreateAgentPage() {
   const [channelIdx, setChannelIdx] = useState<number | null>(null);
 
   // Persona
-  const [personaName, setPersonaName] = useState("Mira");
+  const [displayName, setDisplayName] = useState("Mira");
   const [voiceTone, setVoiceTone] = useState<VoiceTone>("warm_friendly");
   const [languages, setLanguages] = useState<string[]>(["en"]);
-  const [consentMode, setConsentMode] = useState<ConsentTemplateMode>("warm_friendly");
-  const [customConsent, setCustomConsent] = useState<string>(defaultConsentTemplates.warm_friendly);
+
+  // Consent template
+  const [consentMode, setConsentMode] = useState<ConsentMode>("free_text");
+  const [freeTextConsent, setFreeTextConsent] = useState(
+    "Hi! 👋 I'm {agentName}, the AI assistant for {hospitalName}. Messages may be monitored for quality. How can I help you today?"
+  );
+  const [messageTemplateId, setMessageTemplateId] = useState(availableConsentTemplates[0].id);
 
   // Library subscriptions
   const [kbSets, setKbSets] = useState<Set<string>>(new Set());
   const [enabledRules, setEnabledRules] = useState<Set<string>>(new Set());
   const [enabledRecs, setEnabledRecs] = useState<Set<string>>(new Set());
 
-  // Custom instructions
-  const [customInstructions, setCustomInstructions] = useState("");
+  // Handover Rules
+  const [handoverRules, setHandoverRules] = useState<HandoverRule[]>(defaultHandoverRules);
 
   // Behavior (advanced)
   const [behaviorOpen, setBehaviorOpen] = useState(false);
   const [modelTier, setModelTier] = useState<ModelTier>("essential");
-  const [handoverTeam, setHandoverTeam] = useState(availableHandoverTeams[0]);
-  const [fallbackEmail, setFallbackEmail] = useState("ops@mediatrix.com.ph");
-  const [afterHours, setAfterHours] = useState<AfterHoursBehavior>("handover_all");
-  const [afterHoursStart, setAfterHoursStart] = useState("18:00");
-  const [afterHoursEnd, setAfterHoursEnd] = useState("09:00");
-  const [emergencyMode, setEmergencyMode] = useState<"defaults" | "add" | "replace">("defaults");
-  const [customEmergency, setCustomEmergency] = useState("");
+  const [customInstructions, setCustomInstructions] = useState("");
 
   function toggleSet(set: Set<string>, setSet: (s: Set<string>) => void, value: string) {
     const next = new Set(set);
@@ -94,16 +95,7 @@ export default function CreateAgentPage() {
   }
 
   const selectedChannel = channelIdx !== null ? availableChannels[channelIdx] : null;
-
-  // Group channels by type
-  const groupedChannels = useMemo(() => {
-    const groups: Record<string, ChannelOption[]> = {};
-    availableChannels.forEach((ch) => {
-      if (!groups[ch.type]) groups[ch.type] = [];
-      groups[ch.type].push(ch);
-    });
-    return groups;
-  }, []);
+  const selectedMessageTemplate = availableConsentTemplates.find((t) => t.id === messageTemplateId);
 
   // Build KB picker items
   const kbItems: LibraryPickerItem[] = availableKnowledgeBaseSets.map((kb) => ({
@@ -134,14 +126,42 @@ export default function CreateAgentPage() {
 
   // Consent preview
   const consentPreview = useMemo(() => {
-    const text = consentMode === "custom" ? customConsent : defaultConsentTemplates[consentMode];
-    return text
-      .replace(/\{agentName\}/g, personaName || "[Agent Name]")
-      .replace(/\{hospitalName\}/g, "Mary Mediatrix Medical Center");
-  }, [consentMode, customConsent, personaName]);
+    if (consentMode === "free_text") {
+      return freeTextConsent
+        .replace(/\{agentName\}/g, displayName || "[Agent Name]")
+        .replace(/\{hospitalName\}/g, "Mary Mediatrix Medical Center");
+    }
+    const tpl = availableConsentTemplates.find((t) => t.id === messageTemplateId);
+    return tpl
+      ? tpl.preview
+          .replace(/\{agentName\}/g, displayName || "[Agent Name]")
+          .replace(/\{hospitalName\}/g, "Mary Mediatrix Medical Center")
+      : "";
+  }, [consentMode, freeTextConsent, messageTemplateId, displayName]);
 
   const charCount = customInstructions.length;
   const maxChars = 500;
+
+  // Handover rule management
+  function addHandoverRule() {
+    setHandoverRules((prev) => [
+      ...prev,
+      {
+        id: `hr_${Date.now()}`,
+        trigger: "keyword",
+        trigger_value: "",
+        destination: availableHandoverTeams[0],
+      },
+    ]);
+  }
+
+  function updateHandoverRule(id: string, patch: Partial<HandoverRule>) {
+    setHandoverRules((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  }
+
+  function removeHandoverRule(id: string) {
+    setHandoverRules((prev) => prev.filter((r) => r.id !== id));
+  }
 
   return (
     <div className="pb-16">
@@ -152,7 +172,7 @@ export default function CreateAgentPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Create AI Agent</h1>
-          <p className="text-[16px] text-gray-500 mt-2">Configure a new AI agent to handle patient conversations</p>
+          <p className="text-[16px] text-gray-500 mt-2">Configure a new AI agent for your channel</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -170,7 +190,7 @@ export default function CreateAgentPage() {
         {/* Start from */}
         <div className="py-6">
           <h3 className="text-sm font-semibold text-[#111824] mb-3">Start from</h3>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => setStartFrom("blank")}
               className={`p-3 rounded-lg border-2 text-left transition-colors ${
@@ -199,20 +219,6 @@ export default function CreateAgentPage() {
               </div>
               <div className="text-xs text-gray-500">Copy config from another agent</div>
             </button>
-            <button
-              onClick={() => setStartFrom("template")}
-              className={`p-3 rounded-lg border-2 text-left transition-colors ${
-                startFrom === "template"
-                  ? "border-[#4361EE] bg-blue-50 dark:bg-[#151E3A]"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Sparkles size={14} className="text-gray-400" />
-                <div className="text-sm font-medium text-[#111824]">Use template</div>
-              </div>
-              <div className="text-xs text-gray-500">Start from a preset</div>
-            </button>
           </div>
 
           {startFrom === "clone" && (
@@ -226,21 +232,7 @@ export default function CreateAgentPage() {
                   <option key={a.id} value={a.id}>{a.name}</option>
                 ))}
               </select>
-              <p className="text-xs text-gray-400 mt-2">Cloning carries over everything except channel, persona name, and sandbox code.</p>
-            </div>
-          )}
-
-          {startFrom === "template" && (
-            <div className="mt-3">
-              <select
-                value={templateId}
-                onChange={(e) => setTemplateId(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-              >
-                {templates.map((t) => (
-                  <option key={t.id} value={t.id}>{t.name} — {t.description}</option>
-                ))}
-              </select>
+              <p className="text-xs text-gray-400 mt-2">Cloning carries over everything except channel, display name, and sandbox code.</p>
             </div>
           )}
         </div>
@@ -255,7 +247,7 @@ export default function CreateAgentPage() {
           </div>
           <div className="ml-10 space-y-5">
             <div>
-              <label className="text-sm font-medium text-gray-500 mb-1 block">Agent Name</label>
+              <label className="text-sm font-medium text-gray-500 mb-1 block">Agent Name (Internal)</label>
               <input
                 type="text"
                 value={name}
@@ -263,6 +255,7 @@ export default function CreateAgentPage() {
                 placeholder="e.g., Patient Bot"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
               />
+              <p className="text-xs text-gray-400 mt-1">Internal name for your team — not shown to patients.</p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500 mb-1 block">Internal description (not shown to patients)</label>
@@ -275,64 +268,28 @@ export default function CreateAgentPage() {
               />
             </div>
 
-            {/* Channel Picker */}
+            {/* Channel dropdown selector */}
             <div>
               <label className="text-sm font-medium text-gray-500 mb-1 block">Channel</label>
-              <p className="text-xs text-gray-400 mb-2">Each channel can have only one agent.</p>
-              <div className="space-y-3">
-                {Object.entries(groupedChannels).map(([type, channels]) => {
-                  const icon = channelIcons[type];
-                  const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+              <p className="text-xs text-gray-400 mb-2">Each channel can only have one agent.</p>
+              <select
+                value={channelIdx ?? ""}
+                onChange={(e) => setChannelIdx(e.target.value === "" ? null : Number(e.target.value))}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+              >
+                <option value="">Select a channel</option>
+                {availableChannels.map((ch, idx) => {
+                  const typeLabel = ch.type.charAt(0).toUpperCase() + ch.type.slice(1);
+                  const disabled = !!ch.used_by_agent;
                   return (
-                    <div key={type}>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        {icon && <Image src={icon} alt="" width={16} height={16} className="w-4 h-4 rounded" />}
-                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{typeLabel}</span>
-                      </div>
-                      <div className="space-y-1.5">
-                        {channels.map((ch) => {
-                          const globalIdx = availableChannels.indexOf(ch);
-                          const isAvailable = !ch.used_by_agent;
-                          const isSelected = channelIdx === globalIdx;
-                          return (
-                            <button
-                              key={globalIdx}
-                              onClick={() => isAvailable && setChannelIdx(globalIdx)}
-                              disabled={!isAvailable}
-                              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg border-2 text-left transition-colors ${
-                                isSelected
-                                  ? "border-[#4361EE] bg-blue-50 dark:bg-[#151E3A]"
-                                  : isAvailable
-                                  ? "border-gray-200 hover:border-gray-300"
-                                  : "border-gray-100 bg-gray-50 dark:bg-[#1A2336] cursor-not-allowed"
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className={`text-sm font-medium ${isAvailable ? "text-[#111824]" : "text-gray-400"}`}>
-                                  {ch.label}
-                                </span>
-                                <span className={`text-sm font-mono ${isAvailable ? "text-gray-500" : "text-gray-400"}`}>
-                                  — {ch.identifier}
-                                </span>
-                              </div>
-                              {isAvailable ? (
-                                <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-medium">
-                                  <Check size={12} /> available
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-xs text-gray-400 font-medium">
-                                  <Lock size={12} /> used by {ch.used_by_agent}
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                    <option key={idx} value={idx} disabled={disabled}>
+                      {typeLabel} · {ch.label} — {ch.identifier}
+                      {disabled ? ` (used by ${ch.used_by_agent})` : ""}
+                    </option>
                   );
                 })}
-              </div>
-              <div className="mt-3 text-xs text-gray-400">
+              </select>
+              <div className="mt-2 text-xs text-gray-400">
                 Don&apos;t see your channel?{" "}
                 <Link href="/channels" className="text-blue-600 hover:underline">
                   Connect a channel →
@@ -376,15 +333,15 @@ export default function CreateAgentPage() {
           </div>
           <div className="ml-10 space-y-5">
             <div>
-              <label className="text-sm font-medium text-gray-500 mb-1 block">Persona name</label>
+              <label className="text-sm font-medium text-gray-500 mb-1 block">Agent Display Name</label>
               <input
                 type="text"
-                value={personaName}
-                onChange={(e) => setPersonaName(e.target.value)}
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="e.g., Mira"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
               />
-              <p className="text-xs text-gray-400 mt-1">How the agent introduces itself to patients</p>
+              <p className="text-xs text-gray-400 mt-1">How the agent introduces itself to patients.</p>
             </div>
 
             <div>
@@ -417,7 +374,7 @@ export default function CreateAgentPage() {
               <p className="text-xs text-gray-400 mt-2">Languages the agent may respond in. We detect the patient&apos;s language automatically.</p>
             </div>
 
-            {/* Consent template (sub-section) */}
+            {/* Consent template */}
             <div className="pt-2 border-t border-gray-100 dark:border-[#1D2638]">
               <label className="text-sm font-medium text-gray-500 mb-2 block mt-4">Consent template</label>
               <div className="space-y-2 mb-3">
@@ -425,61 +382,79 @@ export default function CreateAgentPage() {
                   <input
                     type="radio"
                     name="consent"
-                    checked={consentMode === "warm_friendly"}
-                    onChange={() => setConsentMode("warm_friendly")}
+                    checked={consentMode === "free_text"}
+                    onChange={() => setConsentMode("free_text")}
                     className="mt-0.5"
                   />
                   <div>
-                    <div className="text-sm font-medium text-[#111824]">Warm & Friendly</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Default for this tone</div>
+                    <div className="text-sm font-medium text-[#111824]">Free text</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Write a fixed consent message patients will receive</div>
                   </div>
                 </label>
                 <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
                   <input
                     type="radio"
                     name="consent"
-                    checked={consentMode === "professional_concise"}
-                    onChange={() => setConsentMode("professional_concise")}
+                    checked={consentMode === "message_template"}
+                    onChange={() => setConsentMode("message_template")}
                     className="mt-0.5"
                   />
                   <div>
-                    <div className="text-sm font-medium text-[#111824]">Professional & Concise</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Default for this tone</div>
-                  </div>
-                </label>
-                <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
-                  <input
-                    type="radio"
-                    name="consent"
-                    checked={consentMode === "custom"}
-                    onChange={() => setConsentMode("custom")}
-                    className="mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-[#111824]">Custom</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Write your own consent message</div>
+                    <div className="text-sm font-medium text-[#111824]">Message template</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Select an existing message template (may include Yes/No buttons)</div>
                   </div>
                 </label>
               </div>
 
-              {consentMode === "custom" && (
+              {consentMode === "free_text" && (
                 <div className="bg-gray-50 dark:bg-[#182234] border border-gray-200 dark:border-[#263248] rounded-lg p-4 space-y-3">
                   <div className="text-xs text-gray-500">
                     Available placeholders: <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{agentName}"}</code>{" "}
                     <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{hospitalName}"}</code>
                   </div>
                   <textarea
-                    value={customConsent}
-                    onChange={(e) => setCustomConsent(e.target.value)}
+                    value={freeTextConsent}
+                    onChange={(e) => setFreeTextConsent(e.target.value)}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition resize-none"
                   />
                 </div>
               )}
 
+              {consentMode === "message_template" && (
+                <div className="space-y-3">
+                  <select
+                    value={messageTemplateId}
+                    onChange={(e) => setMessageTemplateId(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                  >
+                    {availableConsentTemplates.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}{t.has_buttons ? " (with buttons)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="text-xs text-gray-400">
+                    Don&apos;t see your template?{" "}
+                    <Link href="/templates" className="text-blue-600 hover:underline">
+                      Manage templates →
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-3 bg-blue-50 dark:bg-[#151E3A] border border-blue-100 dark:border-[#1E3A6E] rounded-lg p-3">
                 <div className="text-xs text-gray-500 mb-1">Preview:</div>
                 <div className="text-sm text-[#111824] dark:text-[#F5F7FB] italic">&ldquo;{consentPreview}&rdquo;</div>
+                {consentMode === "message_template" && selectedMessageTemplate?.has_buttons && selectedMessageTemplate.buttons && (
+                  <div className="flex gap-2 mt-3">
+                    {selectedMessageTemplate.buttons.map((btn) => (
+                      <span key={btn} className="text-xs px-3 py-1 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-md text-[#4361EE] dark:text-[#7DA2FF] font-medium">
+                        {btn}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -499,7 +474,7 @@ export default function CreateAgentPage() {
               items={kbItems}
               selectedIds={kbSets}
               onToggle={(id) => toggleSet(kbSets, setKbSets, id)}
-              searchPlaceholder="Search sets..."
+              searchPlaceholder="Search knowledge base sets..."
               itemLabel="sets"
               createLabel="Create new set"
               createHref="/knowledge-base"
@@ -523,7 +498,7 @@ export default function CreateAgentPage() {
               items={ruleItems}
               selectedIds={enabledRules}
               onToggle={(id) => toggleSet(enabledRules, setEnabledRules, id)}
-              searchPlaceholder="Search rules..."
+              searchPlaceholder="Search scheduling rules..."
               itemLabel="rules"
               createLabel="Create new rule"
               createHref="/rules"
@@ -547,7 +522,7 @@ export default function CreateAgentPage() {
               items={recItems}
               selectedIds={enabledRecs}
               onToggle={(id) => toggleSet(enabledRecs, setEnabledRecs, id)}
-              searchPlaceholder="Search flows..."
+              searchPlaceholder="Search recommendation flows..."
               itemLabel="flows"
               createLabel="Create recommendation flow"
               createHref="/recommendations"
@@ -559,55 +534,96 @@ export default function CreateAgentPage() {
 
         <div className="border-b border-gray-200" />
 
-        {/* Section 6: Custom Instructions */}
+        {/* Section 6: Handover Rules */}
         <div className="py-8">
           <div className="flex items-center gap-3 mb-6">
             <SectionNumber num={6} />
-            <h3 className="text-base font-semibold text-[#111824]">Custom instructions</h3>
+            <h3 className="text-base font-semibold text-[#111824]">Handover Rules</h3>
           </div>
-          <div className="ml-10 space-y-3">
-            <p className="text-sm text-gray-500">
-              Additional admin-specific behavior. Appended to the prompt. Cannot override safety rules
-              (emergency handling, medical advice, handover on frustration). Max 500 characters.
+          <div className="ml-10">
+            <p className="text-sm text-gray-500 mb-4">
+              Define when the AI should hand over the conversation to a human team member.
             </p>
-            <div className="relative">
-              <textarea
-                value={customInstructions}
-                onChange={(e) => {
-                  if (e.target.value.length <= maxChars) setCustomInstructions(e.target.value);
-                }}
-                rows={5}
-                placeholder="e.g., Always remind patients over 50 about our annual wellness package discount."
-                className="w-full px-4 py-3 pb-8 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition resize-none"
-              />
-              <span className={`absolute right-3 bottom-3 text-xs tabular-nums ${
-                charCount > maxChars * 0.9 ? "text-amber-600" : "text-gray-400"
-              }`}>
-                {charCount}/{maxChars}
-              </span>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 mt-2">Examples other hospitals use:</div>
-              <ul className="space-y-1">
-                {instructionExamples.map((ex, i) => (
-                  <li key={i} className="text-sm text-gray-500 flex items-start gap-2">
-                    <span className="text-gray-400 shrink-0">▸</span>
+
+            <div className="space-y-3">
+              {handoverRules.map((rule, idx) => (
+                <div key={rule.id} className="bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Rule {idx + 1}</span>
                     <button
-                      onClick={() => charCount + ex.length <= maxChars && setCustomInstructions(customInstructions ? `${customInstructions} ${ex}` : ex)}
-                      className="text-left hover:text-[#4361EE] transition-colors"
+                      onClick={() => removeHandoverRule(rule.id)}
+                      className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-[#2D1818] rounded-md transition-colors"
                     >
-                      &ldquo;{ex}&rdquo;
+                      <Trash2 size={14} />
                     </button>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                  <div className="grid grid-cols-[90px_1fr] gap-3 items-center">
+                    <span className="text-xs font-medium text-gray-500">When</span>
+                    <select
+                      value={rule.trigger}
+                      onChange={(e) => updateHandoverRule(rule.id, { trigger: e.target.value as HandoverRule["trigger"] })}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                    >
+                      {handoverTriggers.map((t) => (
+                        <option key={t.value} value={t.value}>{t.label}</option>
+                      ))}
+                    </select>
+
+                    {(rule.trigger === "keyword" || rule.trigger === "after_turns" || rule.trigger === "custom") && (
+                      <>
+                        <span className="text-xs font-medium text-gray-500">
+                          {rule.trigger === "keyword" ? "Keywords" : rule.trigger === "after_turns" ? "After N turns" : "Condition"}
+                        </span>
+                        <input
+                          type={rule.trigger === "after_turns" ? "number" : "text"}
+                          value={rule.trigger_value}
+                          onChange={(e) => updateHandoverRule(rule.id, { trigger_value: e.target.value })}
+                          placeholder={
+                            rule.trigger === "keyword"
+                              ? '"speak to human", "talk to staff"'
+                              : rule.trigger === "after_turns"
+                              ? "e.g., 5"
+                              : "Describe the condition"
+                          }
+                          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                        />
+                      </>
+                    )}
+
+                    <span className="text-xs font-medium text-gray-500">Hand off to</span>
+                    <select
+                      value={rule.destination}
+                      onChange={(e) => updateHandoverRule(rule.id, { destination: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                    >
+                      {availableHandoverTeams.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ))}
+
+              {handoverRules.length === 0 && (
+                <div className="text-center py-6 text-sm text-gray-400 border border-dashed border-gray-200 dark:border-[#263248] rounded-lg">
+                  No handover rules yet. Add one to let the AI hand off conversations when needed.
+                </div>
+              )}
+
+              <button
+                onClick={addHandoverRule}
+                className="flex items-center gap-1.5 text-sm font-medium text-[#4361EE] hover:text-[#3651DE] transition-colors"
+              >
+                <Plus size={14} />
+                Add handover rule
+              </button>
             </div>
           </div>
         </div>
 
         <div className="border-b border-gray-200" />
 
-        {/* Section 7: Behavior (collapsible) */}
+        {/* Section 7: Behavior (advanced, collapsible) */}
         <div className="py-8">
           <button
             onClick={() => setBehaviorOpen(!behaviorOpen)}
@@ -643,97 +659,44 @@ export default function CreateAgentPage() {
                 </div>
               </div>
 
-              {/* Handover */}
+              {/* Custom Instructions */}
               <div>
-                <label className="text-sm font-medium text-gray-500 mb-1 block">Handover destination</label>
-                <div className="space-y-3">
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1">Assign handovers to</div>
-                    <select
-                      value={handoverTeam}
-                      onChange={(e) => setHandoverTeam(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-                    >
-                      {availableHandoverTeams.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-400 mb-1">Fallback email (for out-of-hours)</div>
-                    <input
-                      type="email"
-                      value={fallbackEmail}
-                      onChange={(e) => setFallbackEmail(e.target.value)}
-                      placeholder="ops@hospital.com"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* After-office hours */}
-              <div>
-                <label className="text-sm font-medium text-gray-500 mb-2 block">After-office hours behavior</label>
-                <div className="space-y-2 mb-3">
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="afterHours" checked={afterHours === "normal"} onChange={() => setAfterHours("normal")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Normal (respond + queue for human)</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="afterHours" checked={afterHours === "handover_all"} onChange={() => setAfterHours("handover_all")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Handover all conversations</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="afterHours" checked={afterHours === "auto_reply"} onChange={() => setAfterHours("auto_reply")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Send auto-reply</span>
-                  </label>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-500">Hours:</span>
-                  <input
-                    type="time"
-                    value={afterHoursStart}
-                    onChange={(e) => setAfterHoursStart(e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                <label className="text-sm font-medium text-gray-500 mb-1 block">Custom instructions</label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Additional AI agent prompts appended to default prompts. Does not override safety rules (emergency handling, medical advice, handover rules). Max 500 characters.
+                </p>
+                <div className="relative">
+                  <textarea
+                    value={customInstructions}
+                    onChange={(e) => {
+                      if (e.target.value.length <= maxChars) setCustomInstructions(e.target.value);
+                    }}
+                    rows={5}
+                    placeholder="e.g., Always remind patients over 50 about our annual wellness package discount."
+                    className="w-full px-4 py-3 pb-8 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition resize-none"
                   />
-                  <span className="text-gray-400">to</span>
-                  <input
-                    type="time"
-                    value={afterHoursEnd}
-                    onChange={(e) => setAfterHoursEnd(e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-                  />
-                  <span className="text-xs text-gray-400 ml-2">Timezone: inherits from hospital</span>
+                  <span className={`absolute right-3 bottom-3 text-xs tabular-nums ${
+                    charCount > maxChars * 0.9 ? "text-amber-600" : "text-gray-400"
+                  }`}>
+                    {charCount}/{maxChars}
+                  </span>
                 </div>
-              </div>
-
-              {/* Emergency Keywords */}
-              <div>
-                <label className="text-sm font-medium text-gray-500 mb-2 block">Emergency keywords</label>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="emergency" checked={emergencyMode === "defaults"} onChange={() => setEmergencyMode("defaults")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Use organization defaults</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="emergency" checked={emergencyMode === "add"} onChange={() => setEmergencyMode("add")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Add custom keywords</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-[#263248] rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors">
-                    <input type="radio" name="emergency" checked={emergencyMode === "replace"} onChange={() => setEmergencyMode("replace")} />
-                    <span className="text-sm text-[#111824] dark:text-[#F5F7FB]">Replace with custom list</span>
-                  </label>
+                <div className="mt-3">
+                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Examples other hospitals use:</div>
+                  <ul className="space-y-1">
+                    {instructionExamples.map((ex, i) => (
+                      <li key={i} className="text-sm text-gray-500 flex items-start gap-2">
+                        <span className="text-gray-400 shrink-0">▸</span>
+                        <button
+                          onClick={() => charCount + ex.length <= maxChars && setCustomInstructions(customInstructions ? `${customInstructions} ${ex}` : ex)}
+                          className="text-left hover:text-[#4361EE] transition-colors"
+                        >
+                          &ldquo;{ex}&rdquo;
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                {(emergencyMode === "add" || emergencyMode === "replace") && (
-                  <input
-                    type="text"
-                    value={customEmergency}
-                    onChange={(e) => setCustomEmergency(e.target.value)}
-                    placeholder='e.g., "chest pain", "bleeding", "heart attack"'
-                    className="w-full mt-3 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-                  />
-                )}
               </div>
             </div>
           )}

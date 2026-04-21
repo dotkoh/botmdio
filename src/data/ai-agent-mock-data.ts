@@ -259,6 +259,49 @@ export const availableHandoverTeams = [
   "Triage nurse",
 ];
 
+export interface MessageTemplate {
+  id: string;
+  name: string;
+  preview: string;
+  has_buttons: boolean;
+  buttons?: string[];
+}
+
+export const availableConsentTemplates: MessageTemplate[] = [
+  {
+    id: "mt_consent_yesno",
+    name: "AI Consent (Yes/No)",
+    preview: "Hi! I'm {agentName}, the AI assistant for {hospitalName}. Messages may be monitored for quality. Do you consent to continue?",
+    has_buttons: true,
+    buttons: ["Yes, continue", "No, thanks"],
+  },
+  {
+    id: "mt_consent_formal",
+    name: "Formal AI Disclosure",
+    preview: "You are now chatting with {agentName}, an AI assistant for {hospitalName}. This conversation may be logged. Reply YES to continue.",
+    has_buttons: true,
+    buttons: ["YES", "Speak to a human"],
+  },
+  {
+    id: "mt_consent_simple",
+    name: "Simple AI Intro",
+    preview: "Hello 👋 I'm {agentName}, a virtual assistant. I can help with appointments, FAQs and more.",
+    has_buttons: false,
+  },
+];
+
+export interface HandoverRule {
+  id: string;
+  trigger: "keyword" | "sentiment" | "after_turns" | "no_kb_match" | "emergency" | "custom";
+  trigger_value: string;
+  destination: string;
+}
+
+export const defaultHandoverRules: HandoverRule[] = [
+  { id: "hr_1", trigger: "emergency", trigger_value: "Emergency keywords detected", destination: "Triage nurse" },
+  { id: "hr_2", trigger: "sentiment", trigger_value: "Patient expresses frustration", destination: "Patient services team" },
+];
+
 export const instructionExamples = [
   "Ask about fasting status before any bloodwork booking",
   "Mention complimentary valet parking for members",
