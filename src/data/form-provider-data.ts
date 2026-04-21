@@ -60,32 +60,6 @@ export const formProviders: FormProviderDefinition[] = [
       "Toggle the webhook to 'On' to activate",
     ],
   },
-  {
-    id: "jotform",
-    name: "JotForm",
-    description: "Integrate JotForm submissions with your Bot MD workflows",
-    icon: "/form-providers/jotform.svg",
-    webhookInstructions: [
-      "Open your form in JotForm",
-      "Go to Settings → Integrations",
-      "Search for 'Webhooks' and click Connect",
-      "Paste the webhook URL below",
-      "Click 'Complete Integration'",
-    ],
-  },
-  {
-    id: "ms_forms",
-    name: "Microsoft Forms",
-    description: "Connect Microsoft Forms via Power Automate webhook",
-    icon: "/form-providers/ms-forms.svg",
-    webhookInstructions: [
-      "Open Power Automate and create a new flow",
-      "Trigger: 'When a new response is submitted' (Microsoft Forms)",
-      "Add action: HTTP POST to URL",
-      "Paste the webhook URL below as the POST endpoint",
-      "Save and activate the flow",
-    ],
-  },
 ];
 
 export const mockFormAccounts: ConnectedFormAccount[] = [
