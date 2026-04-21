@@ -29,6 +29,7 @@ import {
   ListChecks,
   BookOpen,
   Sparkles,
+  BellRing,
 } from "lucide-react";
 
 interface NavItem {
@@ -58,6 +59,7 @@ const navSections: NavSection[] = [
       { name: "Appointments", href: "/appointments", customIcon: "/icons/appointments.svg" },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
       { name: "Rules", href: "/rules", icon: ListChecks },
+      { name: "Requests", href: "/scheduling-requests", icon: BellRing },
     ],
   },
   {
