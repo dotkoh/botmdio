@@ -86,10 +86,10 @@ const navSections: NavSection[] = [
   {
     label: "AUTOMATION",
     items: [
-      { name: "AI Agents", href: "/ai-agents", icon: Bot, count: 3 },
-      { name: "Knowledge Base", href: "/knowledge-base", icon: BookOpen, count: 24 },
-      { name: "Recommendations", href: "/recommendations", icon: Sparkles, count: 2 },
-      { name: "Workflows", href: "/workflows", customIcon: "/icons/workflows.svg", count: 5 },
+      { name: "AI Agents", href: "/ai-agents", icon: Bot },
+      { name: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
+      { name: "Recommendations", href: "/recommendations", icon: Sparkles },
+      { name: "Workflows", href: "/workflows", customIcon: "/icons/workflows.svg" },
     ],
   },
   {
