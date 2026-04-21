@@ -22,6 +22,12 @@ import {
   Megaphone,
   Radio,
   UsersRound,
+  ClipboardList,
+  FileText,
+  Link2,
+  ListChecks,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 
 interface NavItem {
@@ -29,6 +35,7 @@ interface NavItem {
   href: string;
   icon?: LucideIcon;
   customIcon?: string;
+  count?: number;
 }
 
 interface NavSection {
@@ -49,6 +56,7 @@ const navSections: NavSection[] = [
     items: [
       { name: "Appointments", href: "/appointments", customIcon: "/icons/appointments.svg" },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
+      { name: "Rules", href: "/rules", icon: ListChecks },
     ],
   },
   {
@@ -68,10 +76,20 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    label: "SURVEYS",
+    items: [
+      { name: "Survey Data", href: "/survey-data", icon: ClipboardList },
+      { name: "Forms", href: "/forms", icon: FileText },
+      { name: "Form Providers", href: "/form-providers", icon: Link2 },
+    ],
+  },
+  {
     label: "AUTOMATION",
     items: [
-      { name: "AI Agents", href: "/ai-agents", icon: Bot },
-      { name: "Workflows", href: "/workflows", customIcon: "/icons/workflows.svg" },
+      { name: "AI Agents", href: "/ai-agents", icon: Bot, count: 3 },
+      { name: "Knowledge Base", href: "/knowledge-base", icon: BookOpen, count: 24 },
+      { name: "Recommendations", href: "/recommendations", icon: Sparkles, count: 2 },
+      { name: "Workflows", href: "/workflows", customIcon: "/icons/workflows.svg", count: 5 },
     ],
   },
   {
@@ -181,7 +199,18 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     />
                   ) : null}
                   {!collapsed && (
-                    <span className="text-[15px] font-medium">{item.name}</span>
+                    <>
+                      <span className="text-[15px] font-medium flex-1">{item.name}</span>
+                      {item.count !== undefined && (
+                        <span className={`text-xs font-medium tabular-nums ${
+                          isActive
+                            ? "text-[#4361EE] dark:text-[#7DA2FF]"
+                            : "text-gray-400 dark:text-[#667085]"
+                        }`}>
+                          {item.count}
+                        </span>
+                      )}
+                    </>
                   )}
                 </Link>
               );
