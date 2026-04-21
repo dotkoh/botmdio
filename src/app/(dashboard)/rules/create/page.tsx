@@ -67,8 +67,22 @@ export default function CreateRulePage() {
   const [maxRetries, setMaxRetries] = useState(3);
   const [schedulingLinkUrl, setSchedulingLinkUrl] = useState("");
 
-  // Section 5: Required Properties
-  const [requiredProperties, setRequiredProperties] = useState<string[]>([]);
+  // Section 5: Property Collection Config
+  const [propertyConfigs, setPropertyConfigs] = useState<Record<string, { required: boolean; when: "before" | "after" }>>({});
+  const selectedPropertyKeys = Object.keys(propertyConfigs);
+
+  function handlePropertiesChange(keys: string[]) {
+    // Keep existing configs for kept keys; add defaults for new; drop removed
+    const next: Record<string, { required: boolean; when: "before" | "after" }> = {};
+    keys.forEach((k) => {
+      next[k] = propertyConfigs[k] ?? { required: false, when: "before" };
+    });
+    setPropertyConfigs(next);
+  }
+
+  function updatePropertyConfig(key: string, patch: Partial<{ required: boolean; when: "before" | "after" }>) {
+    setPropertyConfigs((prev) => ({ ...prev, [key]: { ...prev[key], ...patch } }));
+  }
 
   // Section 6: Reschedule
   const [reschedulePolicy, setReschedulePolicy] = useState<ReschedulePolicy>("allowed");
@@ -111,14 +125,9 @@ export default function CreateRulePage() {
             Configure how the AI handles booking for a calendar and appointment types
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-            Save Draft
-          </button>
-          <button className="bg-[#4361EE] hover:bg-[#3651DE] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors">
-            Save Setting
-          </button>
-        </div>
+        <button className="bg-[#4361EE] hover:bg-[#3651DE] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          Save Rule
+        </button>
       </div>
 
       <div className="border-b border-gray-200" />
@@ -409,25 +418,80 @@ export default function CreateRulePage() {
 
         <div className="border-b border-gray-200" />
 
-        {/* Section 5: Required Properties */}
+        {/* Section 5: Property Collection Config */}
         <div className="py-8">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-6">
             <SectionNumber num={5} />
             <h3 className="text-base font-semibold text-[#111824]">What information do we need to collect from the patient?</h3>
           </div>
-          <p className="ml-10 text-sm text-gray-500 mb-6">
-            Select from patient properties. You can set them up in{" "}
-            <Link href="/contacts" className="text-blue-600 hover:underline">
-              Contacts module →
-            </Link>
-          </p>
-          <div className="ml-10">
+          <div className="ml-10 space-y-4">
             <MultiSelect
               options={propertyOptions}
-              selected={requiredProperties}
-              onChange={setRequiredProperties}
-              placeholder="Select required properties..."
+              selected={selectedPropertyKeys}
+              onChange={handlePropertiesChange}
+              placeholder="Select patient properties..."
             />
+
+            {selectedPropertyKeys.length > 0 && (
+              <div className="bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-[#F4F6F8] dark:bg-[#1A2336] border-b border-gray-200 dark:border-[#263248]">
+                      <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] pl-5 pr-4 py-3">Information</th>
+                      <th className="text-center text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-4 py-3 w-28">Required</th>
+                      <th className="text-center text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-4 py-3 w-44">Collect before booking</th>
+                      <th className="text-center text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-4 py-3 w-44">Collect after booking</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedPropertyKeys.map((key) => {
+                      const prop = allProperties.find((p) => p.key === key);
+                      const config = propertyConfigs[key];
+                      return (
+                        <tr key={key} className="border-b border-gray-100 dark:border-[#1D2638] last:border-0">
+                          <td className="pl-5 pr-4 py-4 text-sm text-[#111824] dark:text-[#F5F7FB]">
+                            {prop?.name || key}
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <input
+                              type="checkbox"
+                              checked={config.required}
+                              onChange={(e) => updatePropertyConfig(key, { required: e.target.checked })}
+                              className="w-4 h-4 rounded border-gray-300 text-[#4361EE]"
+                            />
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <input
+                              type="radio"
+                              name={`when_${key}`}
+                              checked={config.when === "before"}
+                              onChange={() => updatePropertyConfig(key, { when: "before" })}
+                              className="w-4 h-4 text-[#4361EE]"
+                            />
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            <input
+                              type="radio"
+                              name={`when_${key}`}
+                              checked={config.when === "after"}
+                              onChange={() => updatePropertyConfig(key, { when: "after" })}
+                              className="w-4 h-4 text-[#4361EE]"
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <p className="text-sm text-gray-500">
+              Select from patient properties. You can set them up in{" "}
+              <Link href="/contacts" className="text-blue-600 hover:underline">
+                Contacts module →
+              </Link>
+            </p>
           </div>
         </div>
 
