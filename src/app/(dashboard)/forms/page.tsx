@@ -8,7 +8,6 @@ import {
   formTypeLabels,
   IntegratedForm,
   FormStatus,
-  FormType,
 } from "@/data/form-provider-data";
 import Dropdown from "@/components/ui/Dropdown";
 import Pagination from "@/components/contacts/Pagination";
@@ -35,7 +34,6 @@ export default function FormsPage() {
   const [providerFilter, setProviderFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [formTypeFilter, setFormTypeFilter] = useState<string | null>(null);
-  const [languageFilter, setLanguageFilter] = useState<string | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
@@ -59,22 +57,15 @@ export default function FormsPage() {
     [forms]
   );
 
-  const uniqueLanguages = useMemo(() => {
-    const set = new Set<string>();
-    forms.forEach((f) => f.languages.forEach((l) => set.add(l)));
-    return [...set].sort();
-  }, [forms]);
-
   const filtered = useMemo(() => {
     return forms.filter((f) => {
       if (searchQuery.trim() && !f.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (providerFilter && f.provider_id !== providerFilter) return false;
       if (statusFilter && f.status !== statusFilter) return false;
       if (formTypeFilter && f.form_type !== formTypeFilter) return false;
-      if (languageFilter && !f.languages.includes(languageFilter)) return false;
       return true;
     });
-  }, [forms, searchQuery, providerFilter, statusFilter, formTypeFilter, languageFilter]);
+  }, [forms, searchQuery, providerFilter, statusFilter, formTypeFilter]);
 
   const totalPages = Math.ceil(filtered.length / perPage);
   const paginated = useMemo(
@@ -95,25 +86,24 @@ export default function FormsPage() {
     setOpenMenu(null);
   }
 
-  const hasFilters = !!(providerFilter || statusFilter || formTypeFilter || languageFilter);
+  const hasFilters = !!(providerFilter || statusFilter || formTypeFilter);
   const isEmpty = forms.length === 0;
 
   function clearAllFilters() {
     setProviderFilter(null);
     setStatusFilter(null);
     setFormTypeFilter(null);
-    setLanguageFilter(null);
     setPage(1);
   }
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Forms</h1>
+        <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Survey Data</h1>
         <p className="text-[16px] text-gray-500 mt-2">
           All forms integrated via your{" "}
           <Link href="/form-providers" className="text-blue-600 hover:underline">
-            Form Providers
+            Providers
           </Link>
           . Forms appear here automatically when a webhook is attached.
         </p>
@@ -182,12 +172,6 @@ export default function FormsPage() {
               onChange={(v) => { setFormTypeFilter(v); setPage(1); }}
             />
             <Dropdown
-              label="Language"
-              value={languageFilter}
-              options={uniqueLanguages.map((l) => ({ label: l, value: l }))}
-              onChange={(v) => { setLanguageFilter(v); setPage(1); }}
-            />
-            <Dropdown
               label="Status"
               value={statusFilter}
               options={[
@@ -215,7 +199,6 @@ export default function FormsPage() {
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] pl-6 pr-5 py-4">Form Name</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Provider</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Form Type</th>
-                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Language</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Submissions</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Last Submission</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Status</th>
@@ -241,9 +224,6 @@ export default function FormsPage() {
                           <span className="inline-flex items-center text-xs font-medium text-gray-700 dark:text-[#C7CFDB] bg-gray-100 dark:bg-[#1A2336] border border-gray-200 dark:border-[#263248] px-2.5 py-1 rounded-full">
                             {formTypeLabels[form.form_type]}
                           </span>
-                        </td>
-                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">
-                          {form.languages.join(", ")}
                         </td>
                         <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB] tabular-nums">{form.submissions_count.toLocaleString()}</td>
                         <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">{formatDate(form.last_submission_at)}</td>
@@ -301,7 +281,7 @@ export default function FormsPage() {
                   })}
                   {paginated.length === 0 && (
                     <tr>
-                      <td colSpan={8} className="px-5 py-12 text-center text-sm text-gray-400">
+                      <td colSpan={7} className="px-5 py-12 text-center text-sm text-gray-400">
                         No forms match your filters
                       </td>
                     </tr>

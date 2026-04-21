@@ -60,11 +60,11 @@ export default function FormProvidersPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Form Providers</h1>
+        <h1 className="text-[32px] font-semibold leading-[40px] text-[#111824]">Providers</h1>
         <p className="text-[16px] text-gray-500 mt-2">
           Connect external form providers via webhook. All forms configured with the webhook URL will automatically appear in your{" "}
           <Link href="/forms" className="text-blue-600 hover:underline">
-            Forms list
+            Survey Data
           </Link>
           .
         </p>

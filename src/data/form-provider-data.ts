@@ -1,14 +1,13 @@
 export type FormProviderStatus = "connected" | "disconnected" | "error";
 export type FormStatus = "active" | "inactive";
-export type FormType = "intake" | "prom" | "prem" | "post_visit" | "monitoring" | "other";
+export type FormType = "pre_visit" | "prem" | "prom" | "post_visit" | "monitoring";
 
 export const formTypeLabels: Record<FormType, string> = {
-  intake: "Intake Form",
-  prom: "PROM",
+  pre_visit: "Pre-Visit",
   prem: "PREM",
-  post_visit: "Post Visit Survey",
-  monitoring: "Monitoring Form",
-  other: "Other",
+  prom: "PROM",
+  post_visit: "Post-Visit",
+  monitoring: "Monitoring",
 };
 
 export interface FormProviderDefinition {
@@ -127,7 +126,7 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "botmd_forms",
     name: "Patient Intake Form",
     description: "Initial patient registration and medical history",
-    form_type: "intake",
+    form_type: "pre_visit",
     languages: ["English", "Mandarin", "Malay"],
     form_url: "https://forms.botmd.io/patient-intake",
     status: "active",
@@ -140,7 +139,7 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "botmd_forms",
     name: "Pre-Surgery Questionnaire",
     description: "Pre-operative health assessment and consent",
-    form_type: "intake",
+    form_type: "pre_visit",
     languages: ["English", "Mandarin"],
     form_url: "https://forms.botmd.io/pre-surgery",
     status: "active",
@@ -231,7 +230,7 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "google_forms",
     name: "Maternity Intake Form",
     description: "Prenatal patient registration",
-    form_type: "intake",
+    form_type: "pre_visit",
     languages: ["English", "Malay", "Tamil"],
     form_url: "https://docs.google.com/forms/d/e/3CGkrRNUe.../viewform",
     status: "active",
@@ -270,7 +269,7 @@ export const mockIntegratedForms: IntegratedForm[] = [
     provider_id: "google_forms",
     name: "Radiology Pre-Scan Form",
     description: "Safety screening before MRI/CT scans",
-    form_type: "intake",
+    form_type: "pre_visit",
     languages: ["English", "Mandarin"],
     form_url: "https://docs.google.com/forms/d/e/4DHlsSPVf.../viewform",
     status: "inactive",

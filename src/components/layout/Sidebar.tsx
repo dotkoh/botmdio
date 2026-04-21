@@ -25,6 +25,7 @@ import {
   ClipboardList,
   FileText,
   Link2,
+  Workflow,
   ListChecks,
   BookOpen,
   Sparkles,
@@ -78,9 +79,9 @@ const navSections: NavSection[] = [
   {
     label: "SURVEYS",
     items: [
-      { name: "Forms", href: "/forms", icon: FileText },
-      { name: "Form Workflows", href: "/form-workflows", icon: ClipboardList },
-      { name: "Form Providers", href: "/form-providers", icon: Link2 },
+      { name: "Survey Data", href: "/forms", icon: ClipboardList },
+      { name: "Workflows", href: "/form-workflows", icon: Workflow },
+      { name: "Providers", href: "/form-providers", icon: Link2 },
     ],
   },
   {
