@@ -57,16 +57,16 @@ const navSections: NavSection[] = [
     label: "SCHEDULING",
     items: [
       { name: "Appointments", href: "/appointments", customIcon: "/icons/appointments.svg" },
+      { name: "Requests", href: "/scheduling-requests", icon: BellRing },
       { name: "Calendars", href: "/calendars", icon: CalendarDays },
       { name: "Rules", href: "/rules", icon: ListChecks },
-      { name: "Requests", href: "/scheduling-requests", icon: BellRing },
     ],
   },
   {
     label: "MARKETING",
     items: [
-      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
       { name: "Broadcasts", href: "/broadcasts", icon: Radio },
+      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
       { name: "Segments", href: "/segments", icon: UsersRound },
     ],
   },
