@@ -78,9 +78,10 @@ export default function CreateAgentPage() {
   const [languages, setLanguages] = useState<string[]>(["en"]);
 
   // Consent template
+  const [collectConsent, setCollectConsent] = useState(true);
   const [consentMode, setConsentMode] = useState<ConsentMode>("free_text");
   const [freeTextConsent, setFreeTextConsent] = useState(
-    "Hi! 👋 I'm {agentName}, the AI assistant for {hospitalName}. Messages may be monitored for quality. How can I help you today?"
+    "Hi! My name is {agentName} from {hospitalName}. I'd like to start by obtaining your consent to discuss your private health information here. Please reply with your consent, and then I can help you with your enquiry or schedule an appointment."
   );
   const [messageTemplateId, setMessageTemplateId] = useState(availableConsentTemplates[0].id);
 
@@ -419,87 +420,121 @@ export default function CreateAgentPage() {
             </div>
 
             {/* Consent template */}
-            <div className="pt-2 border-t border-gray-100 dark:border-[#1D2638]">
-              <label className="text-sm font-medium text-gray-500 mb-2 block mt-4">Consent template</label>
-              <div className="space-y-2 mb-3">
-                <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
-                  <input
-                    type="radio"
-                    name="consent"
-                    checked={consentMode === "free_text"}
-                    onChange={() => setConsentMode("free_text")}
-                    className="mt-0.5"
+            <div className="pt-4 border-t border-gray-100 dark:border-[#1D2638]">
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <div className="text-sm font-medium text-[#111824] dark:text-[#F5F7FB]">Collect consent from patient</div>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    When on, the agent sends a consent message before responding to patients. Turn off if your workspace already collects consent elsewhere.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={collectConsent}
+                  onClick={() => setCollectConsent(!collectConsent)}
+                  className={`relative w-10 h-6 rounded-full transition-colors shrink-0 mt-0.5 ${
+                    collectConsent ? "bg-[#4361EE]" : "bg-gray-300 dark:bg-[#263248]"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                      collectConsent ? "left-[18px]" : "left-0.5"
+                    }`}
                   />
-                  <div>
-                    <div className="text-sm font-medium text-[#111824]">Free text</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Write a fixed consent message patients will receive</div>
-                  </div>
-                </label>
-                <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
-                  <input
-                    type="radio"
-                    name="consent"
-                    checked={consentMode === "message_template"}
-                    onChange={() => setConsentMode("message_template")}
-                    className="mt-0.5"
-                  />
-                  <div>
-                    <div className="text-sm font-medium text-[#111824]">Message template</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Select an existing message template (may include Yes/No buttons)</div>
-                  </div>
-                </label>
+                </button>
               </div>
 
-              {consentMode === "free_text" && (
-                <div className="bg-gray-50 dark:bg-[#182234] border border-gray-200 dark:border-[#263248] rounded-lg p-4 space-y-3">
-                  <div className="text-xs text-gray-500">
-                    Available placeholders: <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{agentName}"}</code>{" "}
-                    <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{hospitalName}"}</code>
+              {collectConsent ? (
+                <>
+                  <label className="text-sm font-medium text-gray-500 mb-2 block mt-4">Consent template</label>
+                  <div className="space-y-2 mb-3">
+                    <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
+                      <input
+                        type="radio"
+                        name="consent"
+                        checked={consentMode === "free_text"}
+                        onChange={() => setConsentMode("free_text")}
+                        className="mt-0.5"
+                      />
+                      <div>
+                        <div className="text-sm font-medium text-[#111824]">Free text</div>
+                        <div className="text-xs text-gray-500 mt-0.5">Write a fixed consent message patients will receive</div>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors border-gray-200 dark:border-[#263248]">
+                      <input
+                        type="radio"
+                        name="consent"
+                        checked={consentMode === "message_template"}
+                        onChange={() => setConsentMode("message_template")}
+                        className="mt-0.5"
+                      />
+                      <div>
+                        <div className="text-sm font-medium text-[#111824]">Message template</div>
+                        <div className="text-xs text-gray-500 mt-0.5">Select an existing message template (may include Yes/No buttons)</div>
+                      </div>
+                    </label>
                   </div>
-                  <textarea
-                    value={freeTextConsent}
-                    onChange={(e) => setFreeTextConsent(e.target.value)}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition resize-none"
-                  />
+
+                  {consentMode === "free_text" && (
+                    <div className="bg-gray-50 dark:bg-[#182234] border border-gray-200 dark:border-[#263248] rounded-lg p-4 space-y-3">
+                      <div className="text-xs text-gray-500">
+                        Available placeholders: <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{agentName}"}</code>{" "}
+                        <code className="px-1 py-0.5 bg-white dark:bg-[#121A2B] rounded">{"{hospitalName}"}</code>
+                      </div>
+                      <textarea
+                        value={freeTextConsent}
+                        onChange={(e) => setFreeTextConsent(e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition resize-none"
+                      />
+                    </div>
+                  )}
+
+                  {consentMode === "message_template" && (
+                    <div className="space-y-3">
+                      <select
+                        value={messageTemplateId}
+                        onChange={(e) => setMessageTemplateId(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
+                      >
+                        {availableConsentTemplates.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}{t.has_buttons ? " (with buttons)" : ""}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="text-xs text-gray-400">
+                        Don&apos;t see your template?{" "}
+                        <Link href="/templates" className="text-blue-600 hover:underline">
+                          Manage templates →
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-3 bg-blue-50 dark:bg-[#151E3A] border border-blue-100 dark:border-[#1E3A6E] rounded-lg p-3">
+                    <div className="text-xs text-gray-500 mb-1">Preview:</div>
+                    <div className="text-sm text-[#111824] dark:text-[#F5F7FB] italic">&ldquo;{consentPreview}&rdquo;</div>
+                    {consentMode === "message_template" && selectedMessageTemplate?.has_buttons && selectedMessageTemplate.buttons && (
+                      <div className="flex gap-2 mt-3">
+                        {selectedMessageTemplate.buttons.map((btn) => (
+                          <span key={btn} className="text-xs px-3 py-1 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-md text-[#4361EE] dark:text-[#7DA2FF] font-medium">
+                            {btn}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="bg-gray-50 dark:bg-[#182234] border border-dashed border-gray-300 dark:border-[#263248] rounded-lg p-4">
+                  <p className="text-sm text-gray-500">
+                    The agent will skip the consent step and respond to patients straight away.
+                  </p>
                 </div>
               )}
-
-              {consentMode === "message_template" && (
-                <div className="space-y-3">
-                  <select
-                    value={messageTemplateId}
-                    onChange={(e) => setMessageTemplateId(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#4361EE] focus:border-transparent outline-none transition"
-                  >
-                    {availableConsentTemplates.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}{t.has_buttons ? " (with buttons)" : ""}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="text-xs text-gray-400">
-                    Don&apos;t see your template?{" "}
-                    <Link href="/templates" className="text-blue-600 hover:underline">
-                      Manage templates →
-                    </Link>
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-3 bg-blue-50 dark:bg-[#151E3A] border border-blue-100 dark:border-[#1E3A6E] rounded-lg p-3">
-                <div className="text-xs text-gray-500 mb-1">Preview:</div>
-                <div className="text-sm text-[#111824] dark:text-[#F5F7FB] italic">&ldquo;{consentPreview}&rdquo;</div>
-                {consentMode === "message_template" && selectedMessageTemplate?.has_buttons && selectedMessageTemplate.buttons && (
-                  <div className="flex gap-2 mt-3">
-                    {selectedMessageTemplate.buttons.map((btn) => (
-                      <span key={btn} className="text-xs px-3 py-1 bg-white dark:bg-[#121A2B] border border-gray-200 dark:border-[#263248] rounded-md text-[#4361EE] dark:text-[#7DA2FF] font-medium">
-                        {btn}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
