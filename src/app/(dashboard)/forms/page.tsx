@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   mockIntegratedForms,
   formProviders,
@@ -29,6 +30,7 @@ const statusLabels: Record<FormStatus, string> = {
 };
 
 export default function FormsPage() {
+  const router = useRouter();
   const [forms, setForms] = useState<IntegratedForm[]>(mockIntegratedForms);
   const [searchQuery, setSearchQuery] = useState("");
   const [providerFilter, setProviderFilter] = useState<string | null>(null);
@@ -213,7 +215,8 @@ export default function FormsPage() {
                     return (
                       <tr
                         key={form.id}
-                        className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                        onClick={() => router.push(`/forms/${form.id}`)}
+                        className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors cursor-pointer"
                       >
                         <td className="pl-6 pr-5 py-5">
                           <div className="text-sm font-medium text-[#111824] dark:text-[#F5F7FB]">{form.name}</div>
@@ -242,7 +245,7 @@ export default function FormsPage() {
                               <MoreVertical size={16} />
                             </button>
                             {openMenu === form.id && (
-                              <div ref={menuRef} className="absolute right-0 top-full mt-1 bg-white dark:bg-[#121A2B] rounded-xl border border-gray-200 dark:border-[#263248] shadow-xl z-30 min-w-[180px] py-1">
+                              <div ref={menuRef} onClick={(e) => e.stopPropagation()} className="absolute right-0 top-full mt-1 bg-white dark:bg-[#121A2B] rounded-xl border border-gray-200 dark:border-[#263248] shadow-xl z-30 min-w-[180px] py-1">
                                 <a
                                   href={form.form_url}
                                   target="_blank"
