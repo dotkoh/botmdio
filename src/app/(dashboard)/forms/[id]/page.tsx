@@ -15,6 +15,7 @@ import {
 } from "@/data/survey-response-data";
 import Dropdown from "@/components/ui/Dropdown";
 import Pagination from "@/components/contacts/Pagination";
+import ResponseDrawer from "@/components/forms/ResponseDrawer";
 import {
   ChevronLeft,
   Search,
@@ -72,6 +73,7 @@ export default function SurveyResponsesPage({ params }: { params: Promise<{ id: 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
   const [showCustom, setShowCustom] = useState(false);
+  const [activeResponseId, setActiveResponseId] = useState<string | null>(null);
   const customRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -354,7 +356,8 @@ export default function SurveyResponsesPage({ params }: { params: Promise<{ id: 
                 return (
                   <tr
                     key={r.id}
-                    className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors"
+                    onClick={() => setActiveResponseId(r.id)}
+                    className="border-b border-gray-100 dark:border-[#1D2638] hover:bg-gray-50 dark:hover:bg-[#182234] transition-colors cursor-pointer"
                   >
                     <td className="pl-6 pr-5 py-5">
                       <div className="text-sm font-medium text-[#111824] dark:text-[#F5F7FB]">{r.patient_name}</div>
@@ -400,6 +403,14 @@ export default function SurveyResponsesPage({ params }: { params: Promise<{ id: 
           }}
         />
       </div>
+
+      {/* Response detail drawer */}
+      <ResponseDrawer
+        response={activeResponseId ? responses.find((r) => r.id === activeResponseId) ?? null : null}
+        formId={form.id}
+        formName={form.name}
+        onClose={() => setActiveResponseId(null)}
+      />
     </div>
   );
 }
