@@ -24,12 +24,19 @@ import {
   Workflow as WorkflowIcon,
 } from "lucide-react";
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", {
+function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const datePart = d.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
+  const timePart = d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return `${datePart}, ${timePart}`;
 }
 
 export default function FormWorkflowsPage() {
@@ -169,7 +176,7 @@ export default function FormWorkflowsPage() {
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Applies to</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Reminder Frequency</th>
                     <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Status</th>
-                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Created</th>
+                    <th className="text-left text-[14px] font-normal text-[#111824] dark:text-[#F5F7FB] px-5 py-4">Last edited</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
@@ -210,9 +217,9 @@ export default function FormWorkflowsPage() {
                             {formWorkflowStatusLabels[w.status]}
                           </span>
                         </td>
-                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB]">
-                          <div>{formatDate(w.created_at)}</div>
-                          <div className="text-xs text-gray-400 mt-0.5">by {w.created_by}</div>
+                        <td className="px-5 py-5 text-sm text-gray-700 dark:text-[#C7CFDB] whitespace-nowrap">
+                          <div>{formatDateTime(w.updated_at)}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{w.updated_by}</div>
                         </td>
                         <td className="px-5 py-5">
                           <div className="relative">

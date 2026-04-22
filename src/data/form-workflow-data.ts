@@ -35,6 +35,8 @@ export interface FormWorkflow {
   status: FormWorkflowStatus;
   created_at: string;
   created_by: string;
+  updated_at: string;
+  updated_by: string;
 }
 
 export const formWorkflowStatusLabels: Record<FormWorkflowStatus, string> = {
@@ -52,7 +54,17 @@ export const formWorkflowStatusStyles: Record<
   draft: { dot: "bg-gray-400", text: "text-gray-500 dark:text-gray-400" },
 };
 
-const triggerLabels: Record<ReminderTrigger, string> = {
+// Short trigger labels — used in compact pill rendering on the index table.
+const triggerLabelsShort: Record<ReminderTrigger, string> = {
+  before_appointment: "before appt",
+  after_appointment: "after appt",
+  after_discharge: "post discharge",
+  after_enrolment: "post enrolment",
+  recurring: "(recurring)",
+};
+
+// Long trigger labels — used in the detail timeline.
+const triggerLabelsLong: Record<ReminderTrigger, string> = {
   before_appointment: "before appointment",
   after_appointment: "after appointment",
   after_discharge: "after discharge",
@@ -60,11 +72,11 @@ const triggerLabels: Record<ReminderTrigger, string> = {
   recurring: "(recurring)",
 };
 
-const unitShort: Record<ReminderUnit, { singular: string; plural: string }> = {
-  hours: { singular: "h", plural: "h" },
-  days: { singular: "d", plural: "d" },
-  weeks: { singular: "w", plural: "w" },
-  months: { singular: "mo", plural: "mo" },
+const unitShort: Record<ReminderUnit, string> = {
+  hours: "h",
+  days: "d",
+  weeks: "w",
+  months: "mo",
 };
 
 const unitLong: Record<ReminderUnit, { singular: string; plural: string }> = {
@@ -75,12 +87,14 @@ const unitLong: Record<ReminderUnit, { singular: string; plural: string }> = {
 };
 
 export function formatStepShort(step: ReminderStep): string {
-  const u = unitShort[step.offset_unit];
-  const num = `${step.offset_value}${step.offset_value === 1 ? u.singular : u.plural}`;
+  // Recurring uses the long unit name for clarity ("Every 1 week", "Every 2 weeks").
   if (step.trigger === "recurring") {
-    return `Every ${num}`;
+    const u = unitLong[step.offset_unit];
+    const word = step.offset_value === 1 ? u.singular : u.plural;
+    return `Every ${step.offset_value} ${word}`;
   }
-  return `${num} ${triggerLabels[step.trigger]}`;
+  // Otherwise compact: "1d before appt", "6mo after appt", "1d post discharge".
+  return `${step.offset_value}${unitShort[step.offset_unit]} ${triggerLabelsShort[step.trigger]}`;
 }
 
 export function formatStepLong(step: ReminderStep): string {
@@ -89,7 +103,7 @@ export function formatStepLong(step: ReminderStep): string {
   if (step.trigger === "recurring") {
     return `Every ${num}`;
   }
-  return `Send ${num} ${triggerLabels[step.trigger]}`;
+  return `Send ${num} ${triggerLabelsLong[step.trigger]}`;
 }
 
 export const channelLabels: Record<ReminderChannel, string> = {
@@ -113,6 +127,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-02-12T09:00:00Z",
     created_by: "Dot Koh",
+    updated_at: "2026-04-18T10:24:00Z",
+    updated_by: "Grace Lim",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "days", trigger: "before_appointment", form_id: "form_001", channel: "whatsapp" },
       { id: "s2", offset_value: 1, offset_unit: "days", trigger: "after_appointment", form_id: "form_004", channel: "whatsapp" },
@@ -131,6 +147,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-02-20T14:00:00Z",
     created_by: "Grace Lim",
+    updated_at: "2026-04-21T08:15:00Z",
+    updated_by: "Grace Lim",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "weeks", trigger: "before_appointment", form_id: "form_002", channel: "whatsapp" },
       { id: "s2", offset_value: 1, offset_unit: "days", trigger: "before_appointment", form_id: "form_002", channel: "sms" },
@@ -148,6 +166,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-03-01T10:00:00Z",
     created_by: "Dot Koh",
+    updated_at: "2026-03-12T16:40:00Z",
+    updated_by: "Dot Koh",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "days", trigger: "after_discharge", form_id: "form_003", channel: "whatsapp" },
     ],
@@ -164,6 +184,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-01-15T08:00:00Z",
     created_by: "Dr. Maria Cruz",
+    updated_at: "2026-04-19T11:05:00Z",
+    updated_by: "Dr. Maria Cruz",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "weeks", trigger: "recurring", form_id: "form_007", channel: "whatsapp" },
     ],
@@ -180,6 +202,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-02-28T11:00:00Z",
     created_by: "Nurse Aileen Reyes",
+    updated_at: "2026-04-20T14:30:00Z",
+    updated_by: "Nurse Aileen Reyes",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "days", trigger: "after_appointment", form_id: "form_010", channel: "whatsapp" },
       { id: "s2", offset_value: 3, offset_unit: "days", trigger: "after_appointment", form_id: "form_010", channel: "whatsapp" },
@@ -200,6 +224,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-01-05T09:00:00Z",
     created_by: "Dot Koh",
+    updated_at: "2026-02-09T13:18:00Z",
+    updated_by: "Dot Koh",
     steps: [
       { id: "s1", offset_value: 12, offset_unit: "months", trigger: "after_appointment", form_id: "form_011", channel: "email" },
     ],
@@ -216,6 +242,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "paused",
     created_at: "2026-03-05T15:00:00Z",
     created_by: "Dr. Benjamin Tan",
+    updated_at: "2026-04-15T09:50:00Z",
+    updated_by: "Dr. Benjamin Tan",
     steps: [
       { id: "s1", offset_value: 4, offset_unit: "hours", trigger: "after_appointment", form_id: "form_008", channel: "whatsapp" },
     ],
@@ -233,6 +261,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-04-02T12:00:00Z",
     created_by: "Dr. Benjamin Tan",
+    updated_at: "2026-04-17T10:00:00Z",
+    updated_by: "Dr. Benjamin Tan",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "days", trigger: "after_enrolment", form_id: "form_009", channel: "whatsapp" },
       { id: "s2", offset_value: 1, offset_unit: "months", trigger: "recurring", form_id: "form_011", channel: "whatsapp" },
@@ -250,6 +280,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "active",
     created_at: "2026-02-25T10:30:00Z",
     created_by: "Grace Lim",
+    updated_at: "2026-04-22T07:55:00Z",
+    updated_by: "Grace Lim",
     steps: [
       { id: "s1", offset_value: 1, offset_unit: "weeks", trigger: "before_appointment", form_id: "form_001", channel: "whatsapp" },
       { id: "s2", offset_value: 1, offset_unit: "days", trigger: "before_appointment", form_id: "form_001", channel: "whatsapp" },
@@ -267,6 +299,8 @@ export const mockFormWorkflows: FormWorkflow[] = [
     status: "draft",
     created_at: "2026-04-15T16:00:00Z",
     created_by: "Dot Koh",
+    updated_at: "2026-04-15T16:00:00Z",
+    updated_by: "Dot Koh",
     steps: [
       { id: "s1", offset_value: 2, offset_unit: "days", trigger: "before_appointment", form_id: "form_012", channel: "whatsapp" },
     ],
